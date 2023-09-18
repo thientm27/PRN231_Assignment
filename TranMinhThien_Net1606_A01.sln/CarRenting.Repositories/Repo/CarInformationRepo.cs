@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CarRenting.Repositories.Repo;
 
-public class CarInformationRepo : IBaseRepo<CarInformationDto>
+public class CarInformationRepo : ICarInformationRepo
 {
     private readonly FUCarRentingManagementContext _context;
     private readonly IMapper _mapper;

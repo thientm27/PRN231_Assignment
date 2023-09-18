@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CarRenting.Repositories.Repo
 {
-    public class CustomerRepo : IBaseRepo<CustomerDto>
+    public class CustomerRepo : ICustomerRepo
     {
         private readonly FUCarRentingManagementContext _context;
         private readonly IMapper _mapper;
@@ -36,9 +36,16 @@ namespace CarRenting.Repositories.Repo
             return _mapper.Map<CustomerDto>(loginCustomer);
         }
 
-        public async Task<CustomerDto> AddAsync(CustomerDto customerDto)
+        public async Task<CustomerDto?> AddAsync(CustomerDto customerDto)
         {
-            Customer customer = _mapper.Map<Customer>(customerDto);
+            var existedEmail =
+                _context.Customers.FirstOrDefault(od => od.Email.ToLower().Equals(customerDto.Email.ToLower()));
+            if (existedEmail != null)
+            {
+                return null;
+            }
+
+            var customer = _mapper.Map<Customer>(customerDto);
             var maxId = await _context.Customers.MaxAsync(o => o.CustomerId);
             customer.CustomerId = maxId + 1;
             var rEntry = await _context.Customers.AddAsync(customer);
@@ -59,6 +66,13 @@ namespace CarRenting.Repositories.Repo
 
         public async Task<CustomerDto?> UpdateAsync(CustomerDto customerDto)
         {
+            var existedEmail =
+                _context.Customers.FirstOrDefault(od => od.Email.ToLower().Equals(customerDto.Email.ToLower()) && od.CustomerId != customerDto.CustomerId);
+            if (existedEmail != null)
+            {
+                return null;
+            }
+            
             var customer = _context.Customers.FirstOrDefault(od => od.CustomerId == customerDto.CustomerId);
             if (customer != null)
             {
@@ -66,6 +80,7 @@ namespace CarRenting.Repositories.Repo
                 await _context.SaveChangesAsync();
                 return _mapper.Map<CustomerDto>(customer);
             }
+
             return null;
         }
 
