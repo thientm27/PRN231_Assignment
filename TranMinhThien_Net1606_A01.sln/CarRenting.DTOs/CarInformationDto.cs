@@ -14,17 +14,17 @@ public class CarInformationDto
     public byte? CarStatus { get; set; }
     public decimal? CarRentingPricePerDay { get; set; }
 
-    public virtual Manufacturer Manufacturer { get; set; } = null!;
-    public virtual Supplier Supplier { get; set; } = null!;
+    public virtual ManufacturerDto Manufacturer { get; set; } = null!;
+    public virtual SupplierDto Supplier { get; set; } = null!;
 }
 
-public class Manufacturer
+public class ManufacturerDto
 {
     public int ManufacturerId { get; set; }
     public string ManufacturerName { get; set; } = null!;
 }
 
-public class Supplier
+public class SupplierDto
 {
     public int SupplierId { get; set; }
     public string SupplierName { get; set; } = null!;

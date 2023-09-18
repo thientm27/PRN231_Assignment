@@ -3,6 +3,7 @@ using CarRenting.BusinessObjects.Models;
 using CarRenting.DTOs;
 using CarRenting.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
+using Supplier = CarRenting.BusinessObjects.Models.Supplier;
 
 namespace CarRenting.Repositories.Repo;
 
@@ -18,6 +19,8 @@ public class CarInformationRepo : ICarInformationRepo
         {
             cfg.CreateMap<CarInformationDto, CarInformation>();
             cfg.CreateMap<CarInformation, CarInformationDto>();
+            cfg.CreateMap<Supplier, SupplierDto>();
+            cfg.CreateMap<Manufacturer, ManufacturerDto>();
         });
 
         _mapper = new Mapper(config);
@@ -25,7 +28,10 @@ public class CarInformationRepo : ICarInformationRepo
 
     public async Task<List<CarInformationDto>> GetAsync()
     {
-        var entities = await _context.CarInformations.ToListAsync();
+        var entities = await _context.CarInformations
+            .Include(o => o.Manufacturer)
+            .Include(o => o.Supplier)
+            .ToListAsync();
         return entities.Select(dto => _mapper.Map<CarInformationDto>(dto)).ToList();
     }
 
@@ -41,7 +47,10 @@ public class CarInformationRepo : ICarInformationRepo
 
     public async Task<CarInformationDto?> GetByIdAsync(int id)
     {
-        var entity = await _context.CarInformations.FirstOrDefaultAsync(od => od.CarId == id);
+        var entity = await _context.CarInformations
+            .Include(o => o.Manufacturer)
+            .Include(o => o.Supplier)
+            .FirstOrDefaultAsync(od => od.CarId == id);
         if (entity == null)
         {
             return null;

@@ -1,23 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using CarRenting.BusinessObjects.Models;
-using CarRenting.Repositories.Context;
 using CarRenting.DTOs;
 
 namespace CarRenting.Client.Pages.Admin.Customer
 {
     public class CreateModel : PageModel
     {
-        private readonly CarRenting.Repositories.Context.FUCarRentingManagementContext _context;
+        private readonly HttpClient _client;
+        private string _productApiUrl;
 
-        public CreateModel(CarRenting.Repositories.Context.FUCarRentingManagementContext context)
+        public CreateModel()
         {
-            _context = context;
+            _client = new HttpClient();
+            var contentType = new MediaTypeWithQualityHeaderValue("application/json");
+            _client.DefaultRequestHeaders.Accept.Add(contentType);
+            _productApiUrl = Constants.ApiAdminCustomer;
         }
 
         public IActionResult OnGet()
@@ -32,14 +30,14 @@ namespace CarRenting.Client.Pages.Admin.Customer
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _context.Customers == null || Customer == null)
+            if (ModelState.IsValid)
             {
-                return Page();
+                HttpResponseMessage response = await _client.PostAsJsonAsync(_productApiUrl, Customer);
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToPage("./Index");
+                }
             }
-
-          //  _context.Customers.Add(Customer);
-            await _context.SaveChangesAsync();
-
             return RedirectToPage("./Index");
         }
     }

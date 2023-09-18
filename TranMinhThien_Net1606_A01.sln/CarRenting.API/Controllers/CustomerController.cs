@@ -41,7 +41,7 @@ public class CustomerController : ControllerBase
     public async Task<IActionResult> DeleteCustomer(int id)
     {
         await _repository.DeleteAsync(id);
-        return NoContent();
+        return Ok();
     }
 
 

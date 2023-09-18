@@ -1,63 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using CarRenting.BusinessObjects.Models;
-using CarRenting.Repositories.Context;
 using CarRenting.DTOs;
 
 namespace CarRenting.Client.Pages.Admin.Customer
 {
     public class DeleteModel : PageModel
     {
-        private readonly CarRenting.Repositories.Context.FUCarRentingManagementContext _context;
+        private readonly HttpClient _client;
+        private string _productApiUrl;
 
-        public DeleteModel(CarRenting.Repositories.Context.FUCarRentingManagementContext context)
+        public DeleteModel()
         {
-            _context = context;
+            _client = new HttpClient();
+            var contentType = new MediaTypeWithQualityHeaderValue("application/json");
+            _client.DefaultRequestHeaders.Accept.Add(contentType);
+            _productApiUrl = Constants.ApiAdminCustomer;
         }
 
-        [BindProperty]
-      public CustomerDto Customer { get; set; } = default!;
+        [BindProperty] public CustomerDto Customer { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Customers == null)
+            HttpResponseMessage response = await _client.GetAsync(_productApiUrl + "/" + id);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return NotFound();
+                var dataResponse = response.Content.ReadFromJsonAsync<CustomerDto>().Result;
+                if (dataResponse != null)
+                {
+                    Customer = dataResponse;
+                    return Page();
+                }
             }
 
-            var customer = await _context.Customers.FirstOrDefaultAsync(m => m.CustomerId == id);
-
-            if (customer == null)
-            {
-                return NotFound();
-            }
-            else 
-            {
-               // Customer = customer;
-            }
-            return Page();
+            return NotFound();
         }
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
-            if (id == null || _context.Customers == null)
-            {
-                return NotFound();
-            }
-            var customer = await _context.Customers.FindAsync(id);
-
-            if (customer != null)
-            {
-          //      Customer = customer;
-           //     _context.Customers.Remove(Customer);
-                await _context.SaveChangesAsync();
-            }
-
+            await _client.DeleteAsync(_productApiUrl + "/" + id);
             return RedirectToPage("./Index");
         }
     }

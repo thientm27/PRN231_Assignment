@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -13,21 +14,33 @@ namespace CarRenting.Client.Pages.Admin.Customer
 {
     public class IndexModel : PageModel
     {
-        private readonly CarRenting.Repositories.Context.FUCarRentingManagementContext _context;
+        private readonly HttpClient _client ;
+        private string _productApiUrl;
 
-        public IndexModel(CarRenting.Repositories.Context.FUCarRentingManagementContext context)
+
+        public IndexModel()
         {
-            _context = context;
+            _client = new HttpClient();
+            var contentType = new MediaTypeWithQualityHeaderValue("application/json");
+            _client.DefaultRequestHeaders.Accept.Add(contentType);
+            _productApiUrl = Constants.ApiAdminCustomer;
         }
 
-        public IList<CustomerDto> Customer { get;set; } = default!;
+        public IList<CustomerDto> Customer { get; set; } = default!;
 
         public async Task OnGetAsync()
         {
-            if (_context.Customers != null)
+        
+            HttpResponseMessage response = await _client.GetAsync(_productApiUrl);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-               // Customer = await _context.Customers.ToListAsync();
+                List<CustomerDto>? dataResponse = response.Content.ReadFromJsonAsync<List<CustomerDto>>().Result;
+                if (dataResponse != null)
+                {
+                    Customer = dataResponse;
+                }
             }
+            
         }
     }
 }
