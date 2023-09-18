@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
+using CarRenting.BusinessObjects.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace CarRenting.BusinessObjects.Models
+namespace CarRenting.Repositories.Context
 {
     public partial class FUCarRentingManagementContext : DbContext
     {

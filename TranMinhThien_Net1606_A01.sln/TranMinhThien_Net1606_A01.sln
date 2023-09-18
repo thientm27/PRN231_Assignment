@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRenting.BusinessObjects", "CarRenting.BusinessObjects\CarRenting.BusinessObjects.csproj", "{2A0EEF73-9D40-4458-895D-916F67B18B1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRenting.BusinessObjects", "CarRenting.BusinessObjects\CarRenting.BusinessObjects.csproj", "{2A0EEF73-9D40-4458-895D-916F67B18B1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRenting.Daos", "CarRenting.Daos\CarRenting.Daos.csproj", "{F950E7D0-E85B-4E98-8DA3-D9BF7EC68E0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRenting.Repositories", "CarRenting.Repositories\CarRenting.Repositories.csproj", "{C03E3D68-7AD5-45B8-83E0-42F25EC8D832}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRenting.Repositories", "CarRenting.Repositories\CarRenting.Repositories.csproj", "{C03E3D68-7AD5-45B8-83E0-42F25EC8D832}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRenting.API", "CarRenting.API\CarRenting.API.csproj", "{B6E3FA78-503E-4EFD-96CF-98652A7AFEC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRenting.API", "CarRenting.API\CarRenting.API.csproj", "{B6E3FA78-503E-4EFD-96CF-98652A7AFEC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRenting.Client", "CarRenting.Client\CarRenting.Client.csproj", "{2C50DB07-28DC-409C-923F-4837D9B049E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRenting.Client", "CarRenting.Client\CarRenting.Client.csproj", "{2C50DB07-28DC-409C-923F-4837D9B049E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRenting.DTOs", "CarRenting.DTOs\CarRenting.DTOs.csproj", "{BC5EE957-18F3-4963-8266-05195421B880}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRenting.TestConsole", "CarRenting.TestConsole\CarRenting.TestConsole.csproj", "{314E29FF-8F7A-4CC2-8C08-37E19610E4DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +25,6 @@ Global
 		{2A0EEF73-9D40-4458-895D-916F67B18B1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A0EEF73-9D40-4458-895D-916F67B18B1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A0EEF73-9D40-4458-895D-916F67B18B1D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F950E7D0-E85B-4E98-8DA3-D9BF7EC68E0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F950E7D0-E85B-4E98-8DA3-D9BF7EC68E0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F950E7D0-E85B-4E98-8DA3-D9BF7EC68E0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F950E7D0-E85B-4E98-8DA3-D9BF7EC68E0D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C03E3D68-7AD5-45B8-83E0-42F25EC8D832}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C03E3D68-7AD5-45B8-83E0-42F25EC8D832}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C03E3D68-7AD5-45B8-83E0-42F25EC8D832}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +37,14 @@ Global
 		{2C50DB07-28DC-409C-923F-4837D9B049E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C50DB07-28DC-409C-923F-4837D9B049E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C50DB07-28DC-409C-923F-4837D9B049E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC5EE957-18F3-4963-8266-05195421B880}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC5EE957-18F3-4963-8266-05195421B880}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC5EE957-18F3-4963-8266-05195421B880}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC5EE957-18F3-4963-8266-05195421B880}.Release|Any CPU.Build.0 = Release|Any CPU
+		{314E29FF-8F7A-4CC2-8C08-37E19610E4DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{314E29FF-8F7A-4CC2-8C08-37E19610E4DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{314E29FF-8F7A-4CC2-8C08-37E19610E4DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{314E29FF-8F7A-4CC2-8C08-37E19610E4DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
