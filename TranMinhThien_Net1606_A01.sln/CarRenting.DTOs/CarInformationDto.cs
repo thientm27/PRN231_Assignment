@@ -18,14 +18,3 @@ public class CarInformationDto
     public virtual SupplierDto Supplier { get; set; } = null!;
 }
 
-public class ManufacturerDto
-{
-    public int ManufacturerId { get; set; }
-    public string ManufacturerName { get; set; } = null!;
-}
-
-public class SupplierDto
-{
-    public int SupplierId { get; set; }
-    public string SupplierName { get; set; } = null!;
-}
