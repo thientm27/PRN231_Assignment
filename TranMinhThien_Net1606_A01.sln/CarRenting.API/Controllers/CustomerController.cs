@@ -29,19 +29,20 @@ public class CustomerController : ControllerBase
         var createdCustomer = await _repository.AddAsync(customerDto);
         return createdCustomer;
     }
-
     
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteCustomer(int id)
-    {
-        var result = await _repository.DeleteAsync(id);
-        return NoContent();
-    }
-
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateCustomer(int id, CustomerDto customerDto)
     {
         var result = await _repository.UpdateAsync(customerDto);
         return Ok(result);
     }
+    
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteCustomer(int id)
+    {
+        await _repository.DeleteAsync(id);
+        return NoContent();
+    }
+
+
 }
