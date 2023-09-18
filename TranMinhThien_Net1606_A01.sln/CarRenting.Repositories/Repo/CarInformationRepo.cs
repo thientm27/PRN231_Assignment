@@ -30,7 +30,7 @@ public class CarInformationRepo : ICarInformationRepo
         return _mapper.Map<List<CarInformationDto>>(entities);
     }
 
-    public async Task<CarInformationDto> AddAsync(CarInformationDto dataDto)
+    public async Task<CarInformationDto?> AddAsync(CarInformationDto dataDto)
     {
         var entity = _mapper.Map<CarInformation>(dataDto);
         var maxId = await _context.CarInformations.MaxAsync(o => o.CarId);
