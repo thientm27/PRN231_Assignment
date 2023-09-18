@@ -1,4 +1,4 @@
-namespace CarRenting.DTOs.Request;
+namespace CarRenting.DTOs;
 
 public class CustomerDto
 {
