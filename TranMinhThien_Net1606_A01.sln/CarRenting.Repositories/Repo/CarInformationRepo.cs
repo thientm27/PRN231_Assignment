@@ -18,7 +18,6 @@ public class CarInformationRepo : ICarInformationRepo
         {
             cfg.CreateMap<CarInformationDto, CarInformation>();
             cfg.CreateMap<CarInformation, CarInformationDto>();
-            cfg.CreateMap<List<CarInformationDto>, List<CarInformation>>();
         });
 
         _mapper = new Mapper(config);
@@ -27,17 +26,17 @@ public class CarInformationRepo : ICarInformationRepo
     public async Task<List<CarInformationDto>> GetAsync()
     {
         var entities = await _context.CarInformations.ToListAsync();
-        return _mapper.Map<List<CarInformationDto>>(entities);
+        return entities.Select(dto => _mapper.Map<CarInformationDto>(dto)).ToList();
     }
 
     public async Task<CarInformationDto?> AddAsync(CarInformationDto dataDto)
     {
         var entity = _mapper.Map<CarInformation>(dataDto);
-        var maxId = await _context.CarInformations.MaxAsync(o => o.CarId);
-        entity.CarId = maxId + 1;
+        // var maxId = await _context.CarInformations.MaxAsync(o => o.CarId);
+        // entity.CarId = maxId + 1;
         var rEntry = await _context.CarInformations.AddAsync(entity);
         await _context.SaveChangesAsync();
-        return _mapper.Map<CarInformationDto>(rEntry);
+        return _mapper.Map<CarInformationDto>(rEntry.Entity);
     }
 
     public async Task<CarInformationDto?> GetByIdAsync(int id)
@@ -73,6 +72,7 @@ public class CarInformationRepo : ICarInformationRepo
             await _context.SaveChangesAsync();
             return true;
         }
+
         return false;
     }
 }
