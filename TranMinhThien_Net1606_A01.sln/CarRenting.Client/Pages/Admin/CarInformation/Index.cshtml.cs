@@ -1,34 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using CarRenting.BusinessObjects.Models;
 using CarRenting.DTOs;
-using CarRenting.Repositories.Context;
 
 namespace CarRenting.Client.Pages.Admin.CarInformation
 {
     public class IndexModel : PageModel
     {
-        private readonly CarRenting.Repositories.Context.FUCarRentingManagementContext _context;
+        private readonly HttpClient _client ;
+        private string _carInformationApiUrl;
 
-        public IndexModel(CarRenting.Repositories.Context.FUCarRentingManagementContext context)
+        public IndexModel()
         {
-            _context = context;
+            _client = new HttpClient();
+            var contentType = new MediaTypeWithQualityHeaderValue("application/json");
+            _client.DefaultRequestHeaders.Accept.Add(contentType);
+            _carInformationApiUrl = Constants.ApiAdminCarInformation;
         }
 
         public IList<CarInformationDto> CarInformation { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            if (_context.CarInformations != null)
+            HttpResponseMessage response = await _client.GetAsync(_carInformationApiUrl);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                // CarInformation = await _context.CarInformations
-                // .Include(c => c.Manufacturer)
-                // .Include(c => c.Supplier).ToListAsync();
+                List<CarInformationDto>? dataResponse = response.Content.ReadFromJsonAsync<List<CarInformationDto>>().Result;
+                if (dataResponse != null)
+                {
+                    CarInformation = dataResponse;
+                }
             }
         }
     }

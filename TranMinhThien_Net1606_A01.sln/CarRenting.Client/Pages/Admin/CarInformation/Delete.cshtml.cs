@@ -1,63 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using CarRenting.BusinessObjects.Models;
 using CarRenting.DTOs;
-using CarRenting.Repositories.Context;
 
 namespace CarRenting.Client.Pages.Admin.CarInformation
 {
     public class DeleteModel : PageModel
     {
-        private readonly CarRenting.Repositories.Context.FUCarRentingManagementContext _context;
+        private readonly HttpClient _client;
+        private string _carInformationApiUrl;
 
-        public DeleteModel(CarRenting.Repositories.Context.FUCarRentingManagementContext context)
+        public DeleteModel()
         {
-            _context = context;
+            _client = new HttpClient();
+            var contentType = new MediaTypeWithQualityHeaderValue("application/json");
+            _client.DefaultRequestHeaders.Accept.Add(contentType);
+            _carInformationApiUrl = Constants.ApiAdminCarInformation;
         }
 
-        [BindProperty]
-      public CarInformationDto CarInformation { get; set; } = default!;
+        [BindProperty] public CarInformationDto CarInformation { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.CarInformations == null)
+            HttpResponseMessage response = await _client.GetAsync(_carInformationApiUrl + "/" + id);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return NotFound();
+                var dataResponse = response.Content.ReadFromJsonAsync<CarInformationDto>().Result;
+                if (dataResponse != null)
+                {
+                    CarInformation = dataResponse;
+                    return Page();
+                }
             }
 
-            var carinformation = await _context.CarInformations.FirstOrDefaultAsync(m => m.CarId == id);
-
-            if (carinformation == null)
-            {
-                return NotFound();
-            }
-            else 
-            {
-                // CarInformation = carinformation;
-            }
-            return Page();
+            return NotFound();
         }
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
-            if (id == null || _context.CarInformations == null)
-            {
-                return NotFound();
-            }
-            var carinformation = await _context.CarInformations.FindAsync(id);
-
-            if (carinformation != null)
-            {
-                // CarInformation = carinformation;
-                // _context.CarInformations.Remove(CarInformation);
-                await _context.SaveChangesAsync();
-            }
-
+            await _client.DeleteAsync(_carInformationApiUrl + "/" + id);
             return RedirectToPage("./Index");
         }
     }

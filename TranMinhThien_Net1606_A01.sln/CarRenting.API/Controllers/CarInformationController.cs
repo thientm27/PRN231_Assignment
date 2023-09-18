@@ -11,26 +11,26 @@ public class CarInformationController : ControllerBase
     private readonly ICarInformationRepo _repository = new CarInformationRepo();
 
     [HttpGet]
-    public async Task<List<CarInformationDto>> GetCustomers()
+    public async Task<List<CarInformationDto>> Get()
     {
         return await _repository.GetAsync();
     }
 
     [HttpGet("{id}")]
-    public async Task<CarInformationDto?> GetCustomersById(int id)
+    public async Task<CarInformationDto?> GetById(int id)
     {
         return await _repository.GetByIdAsync(id);
     }
 
     [HttpPost]
-    public async Task<CarInformationDto?> CreateCustomer(CarInformationDto newCar)
+    public async Task<CarInformationDto?> Create(CarInformationDto newCar)
     {
         var createdCustomer = await _repository.AddAsync(newCar);
         return createdCustomer;
     }
     
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateCustomer(int id, CarInformationDto newCar)
+    public async Task<IActionResult> Update(int id, CarInformationDto newCar)
     {
         
         var result = await _repository.UpdateAsync(newCar);
@@ -38,7 +38,7 @@ public class CarInformationController : ControllerBase
     }
     
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteCustomer(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         await _repository.DeleteAsync(id);
         return Ok();

@@ -25,7 +25,7 @@ public class ManufactureRepo : IManufactureRepo
 
     public async Task<List<ManufacturerDto>> GetAsync()
     {
-        var entities = await _context.CarInformations.ToListAsync();
+        var entities = await _context.Manufacturers.ToListAsync();
         return entities.Select(dto => _mapper.Map<ManufacturerDto>(dto)).ToList();
     }
 

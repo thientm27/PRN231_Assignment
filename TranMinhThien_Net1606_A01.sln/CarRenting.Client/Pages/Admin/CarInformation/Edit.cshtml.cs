@@ -1,80 +1,65 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using CarRenting.BusinessObjects.Models;
 using CarRenting.DTOs;
-using CarRenting.Repositories.Context;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CarRenting.Client.Pages.Admin.CarInformation
 {
     public class EditModel : PageModel
     {
-        private readonly CarRenting.Repositories.Context.FUCarRentingManagementContext _context;
+        private readonly HttpClient _client;
+        private string _carInformationApiUrl;
 
-        public EditModel(CarRenting.Repositories.Context.FUCarRentingManagementContext context)
+        public EditModel()
         {
-            _context = context;
+            _client = new HttpClient();
+            var contentType = new MediaTypeWithQualityHeaderValue("application/json");
+            _client.DefaultRequestHeaders.Accept.Add(contentType);
+            _carInformationApiUrl = Constants.ApiAdminCarInformation;
         }
 
-        [BindProperty]
-        public CarInformationDto CarInformation { get; set; } = default!;
+
+        [BindProperty] public CarInformationDto CarInformation { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.CarInformations == null)
+            HttpResponseMessage response = await _client.GetAsync(_carInformationApiUrl + "/" + id);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return NotFound();
+                var dataResponse = response.Content.ReadFromJsonAsync<CarInformationDto>().Result;
+                if (dataResponse != null)
+                {
+                    CarInformation = dataResponse;
+                }
             }
 
-            var carinformation =  await _context.CarInformations.FirstOrDefaultAsync(m => m.CarId == id);
-            if (carinformation == null)
+
+            var manuData = await _client.GetAsync(Constants.ApiManufacture);
+            var supplierData = await _client.GetAsync(Constants.ApiSupplier);
+
+            if (manuData.StatusCode == System.Net.HttpStatusCode.OK
+                && supplierData.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return NotFound();
+                var data1 = manuData.Content.ReadFromJsonAsync<List<ManufacturerDto>>().Result;
+                var data2 = supplierData.Content.ReadFromJsonAsync<List<SupplierDto>>().Result;
+                ViewData["ManufacturerId"] =
+                    new SelectList(data1, "ManufacturerId", "ManufacturerName");
+                ViewData["SupplierId"] = new SelectList(data2, "SupplierId", "SupplierName");
             }
-            // CarInformation = carinformation;
-           ViewData["ManufacturerId"] = new SelectList(_context.Manufacturers, "ManufacturerId", "ManufacturerName");
-           ViewData["SupplierId"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName");
+
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return Page();
-            }
-
-            _context.Attach(CarInformation).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CarInformationExists(CarInformation.CarId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                HttpResponseMessage response =
+                    await _client.PutAsJsonAsync(_carInformationApiUrl + "/" + CarInformation.CarId, CarInformation);
             }
 
             return RedirectToPage("./Index");
-        }
-
-        private bool CarInformationExists(int id)
-        {
-          return (_context.CarInformations?.Any(e => e.CarId == id)).GetValueOrDefault();
         }
     }
 }
