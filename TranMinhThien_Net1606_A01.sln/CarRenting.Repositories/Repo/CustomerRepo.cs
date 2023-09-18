@@ -18,7 +18,6 @@ namespace CarRenting.Repositories.Repo
             {
                 cfg.CreateMap<CustomerDto, Customer>();
                 cfg.CreateMap<Customer, CustomerDto>();
-                cfg.CreateMap<List<CustomerDto>, List<Customer>>();
             });
 
             _mapper = new Mapper(config);
@@ -46,11 +45,9 @@ namespace CarRenting.Repositories.Repo
             }
 
             var customer = _mapper.Map<Customer>(customerDto);
-            var maxId = await _context.Customers.MaxAsync(o => o.CustomerId);
-            customer.CustomerId = maxId + 1;
             var rEntry = await _context.Customers.AddAsync(customer);
             await _context.SaveChangesAsync();
-            return _mapper.Map<CustomerDto>(rEntry);
+            return _mapper.Map<CustomerDto>(rEntry.Entity);
         }
 
         public async Task<CustomerDto?> GetByIdAsync(int id)
@@ -67,12 +64,13 @@ namespace CarRenting.Repositories.Repo
         public async Task<CustomerDto?> UpdateAsync(CustomerDto customerDto)
         {
             var existedEmail =
-                _context.Customers.FirstOrDefault(od => od.Email.ToLower().Equals(customerDto.Email.ToLower()) && od.CustomerId != customerDto.CustomerId);
+                _context.Customers.FirstOrDefault(od =>
+                    od.Email.ToLower().Equals(customerDto.Email.ToLower()) && od.CustomerId != customerDto.CustomerId);
             if (existedEmail != null)
             {
                 return null;
             }
-            
+
             var customer = _context.Customers.FirstOrDefault(od => od.CustomerId == customerDto.CustomerId);
             if (customer != null)
             {
@@ -93,7 +91,7 @@ namespace CarRenting.Repositories.Repo
         public async Task<List<CustomerDto>> GetAsync()
         {
             var customers = await _context.Customers.Where(od => od.CustomerStatus == 1).ToListAsync();
-            return _mapper.Map<List<CustomerDto>>(customers);
+            return customers.Select(dto => _mapper.Map<CustomerDto>(dto)).ToList();
         }
 
         public async Task<bool> DeleteAsync(int customerId)
