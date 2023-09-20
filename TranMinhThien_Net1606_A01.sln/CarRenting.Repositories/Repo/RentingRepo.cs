@@ -102,15 +102,15 @@ public class RentingRepo : IRentingRepo
         return renting;
     }
 
-    public async Task<RentingDto?> GetByIdCustomerAsync(int id)
+    public async Task<List<RentingDto>?> GetByIdCustomerAsync(int id)
     {
-        var entity = await _context.RentingTransactions
+        var entities = await _context.RentingTransactions
             .Include(o => o.Customer)
-            .FirstOrDefaultAsync(od => od.CustomerId == id);
-        if (entity == null)
+            .Where(od => od.CustomerId == id).ToListAsync();
+        if (entities.Count == 0)
         {
             return null;
         }
-        return _mapper.Map<RentingDto>(entity);
+        return entities.Select(dto => _mapper.Map<RentingDto>(dto)).ToList();
     }
 }
