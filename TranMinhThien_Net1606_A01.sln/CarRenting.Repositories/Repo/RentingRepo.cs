@@ -107,7 +107,7 @@ public class RentingRepo : IRentingRepo
         var entities = await _context.RentingTransactions
             .Include(o => o.Customer)
             .Where(od => od.CustomerId == id).ToListAsync();
-        if (entities.Count == 0)
+        if (entities == null || entities.Count == 0)
         {
             return null;
         }

@@ -38,12 +38,12 @@ namespace CarRenting.Client.Pages
                 var dataResponse = response.Content.ReadFromJsonAsync<CustomerDto>().Result;
                 if (dataResponse.CustomerId == -1)
                 {
-                    // HttpContext.Session.SetObjectAsJson("User", dataResponse);
+                    HttpContext.Session.SetInt32("User", -1);
                     return RedirectToPage("./Admin/Customer/Index");
                 }
 
-                // HttpContext.Session.SetObjectAsJson("User", dataResponse);
-                return RedirectToPage("./Admin/Customer/Index");
+                HttpContext.Session.SetInt32("User", dataResponse.CustomerId);
+                return RedirectToPage("./Customer/Index");
             }
 
             else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)

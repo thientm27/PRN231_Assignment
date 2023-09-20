@@ -5,11 +5,12 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>YOUR RENTING ORDER</h1>
 
 <p>
-    <a asp-page="Create">Create New</a>
+    <a asp-page="Create">Create renting</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
@@ -21,9 +22,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.RentingTransaction[0].RentingStatus)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RentingTransaction[0].Customer)
             </th>
             <th></th>
         </tr>
@@ -39,9 +37,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.RentingStatus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Customer.Email)
             </td>
             <td>
                 <a asp-page="./Edit" asp-route-id="@item.RentingTransationId">Edit</a> |
