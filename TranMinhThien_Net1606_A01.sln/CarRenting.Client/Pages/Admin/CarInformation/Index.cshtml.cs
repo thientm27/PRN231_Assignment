@@ -14,7 +14,7 @@ namespace CarRenting.Client.Pages.Admin.CarInformation
             _client = new HttpClient();
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             _client.DefaultRequestHeaders.Accept.Add(contentType);
-            _carInformationApiUrl = Constants.ApiAdminCarInformation;
+            _carInformationApiUrl = Constants.ApiCarInformation;
         }
 
         public IList<CarInformationDto> CarInformation { get;set; } = default!;

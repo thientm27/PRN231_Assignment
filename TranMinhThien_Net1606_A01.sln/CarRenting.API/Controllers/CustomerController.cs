@@ -1,4 +1,5 @@
 using CarRenting.DTOs;
+using CarRenting.DTOs.Request;
 using CarRenting.Repositories;
 using CarRenting.Repositories.Repo;
 using Microsoft.AspNetCore.Mvc;
@@ -43,6 +44,17 @@ public class CustomerController : ControllerBase
         await _repository.DeleteAsync(id);
         return Ok();
     }
+    
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
+    {
+        var loginCustomer = await _repository.LoginAsync(loginRequest.Email, loginRequest.Password);
+            
+        if (loginCustomer == null)
+        {
+            return NotFound("Invalid email or password");
+        }
 
-
+        return Ok(loginCustomer);
+    }
 }

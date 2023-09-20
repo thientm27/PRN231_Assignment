@@ -15,7 +15,7 @@ namespace CarRenting.Client.Pages.Admin.Customer
             _client = new HttpClient();
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             _client.DefaultRequestHeaders.Accept.Add(contentType);
-            _productApiUrl = Constants.ApiAdminCustomer;
+            _productApiUrl = Constants.ApiCustomer;
         }
 
         public IActionResult OnGet()
