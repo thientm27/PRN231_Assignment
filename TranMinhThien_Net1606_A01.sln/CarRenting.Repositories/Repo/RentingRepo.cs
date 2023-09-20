@@ -1,56 +1,116 @@
-﻿using CarRenting.DTOs;
+﻿using AutoMapper;
+using CarRenting.BusinessObjects.Models;
+using CarRenting.DTOs;
+using CarRenting.DTOs.Request;
+using CarRenting.Repositories.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRenting.Repositories.Repo;
 
-public class RentingRepo : IRentingRepo, IRentingDetailRepo
+public class RentingRepo : IRentingRepo
 {
-    Task<List<RentingDto>> IBaseRepo<RentingDto>.GetAsync()
+    private readonly FUCarRentingManagementContext _context;
+    private readonly IMapper _mapper;
+
+    public RentingRepo()
     {
-        throw new NotImplementedException();
+        _context = new FUCarRentingManagementContext();
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<RentingDto, RentingTransaction>();
+            cfg.CreateMap<RentingTransaction, RentingDto>();
+            cfg.CreateMap<RentingDetailDto, RentingDetail>();
+            cfg.CreateMap<RentingDetail, RentingDetailDto>();
+        });
+
+        _mapper = new Mapper(config);
     }
 
-    public Task<RentingDetailDto?> AddAsync(RentingDetailDto customerDto)
+    public async Task<List<RentingDto>> GetAsync()
     {
-        throw new NotImplementedException();
+        var entities = await _context.RentingTransactions
+            .Include(o => o.Customer)
+            .ToListAsync();
+        return entities.Select(dto => _mapper.Map<RentingDto>(dto)).ToList();
     }
 
-    Task<RentingDetailDto?> IBaseRepo<RentingDetailDto>.GetByIdAsync(int id)
+    public async Task<RentingDto?> AddAsync(RentingDto customerDto)
     {
-        throw new NotImplementedException();
+        var entity = _mapper.Map<RentingTransaction>(customerDto);
+        // var maxId = await _context.CarInformations.MaxAsync(o => o.CarId);
+        // entity.CarId = maxId + 1;
+        var rEntry = await _context.RentingTransactions.AddAsync(entity);
+        await _context.SaveChangesAsync();
+        return _mapper.Map<RentingDto>(rEntry.Entity);
     }
 
-    public Task<RentingDetailDto?> UpdateAsync(RentingDetailDto customerDto)
+    public async Task<RentingDto?> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        var entity = await _context.RentingTransactions
+            .Include(o => o.Customer)
+            .FirstOrDefaultAsync(od => od.RentingTransationId == id);
+        if (entity == null)
+        {
+            return null;
+        }
+
+        return _mapper.Map<RentingDto>(entity);
     }
 
-    Task<bool> IBaseRepo<RentingDetailDto>.DeleteAsync(int customerId)
+    public async Task<RentingDto?> UpdateAsync(RentingDto dataDto)
     {
-        throw new NotImplementedException();
+        var entity =
+            _context.RentingTransactions.FirstOrDefault(od => od.RentingTransationId == dataDto.RentingTransationId);
+        if (entity != null)
+        {
+            _context.Entry(entity).CurrentValues.SetValues(_mapper.Map<RentingDto>(dataDto));
+            await _context.SaveChangesAsync();
+            return _mapper.Map<RentingDto>(entity);
+        }
+
+        return null;
     }
 
-    public Task<RentingDto?> AddAsync(RentingDto customerDto)
+    public async Task<bool> DeleteAsync(int id)
     {
-        throw new NotImplementedException();
+        var carInformation = await _context.RentingTransactions.FirstOrDefaultAsync(od => od.RentingTransationId == id);
+        if (carInformation != null)
+        {
+            _context.RentingTransactions.Remove(carInformation);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        return false;
     }
 
-    Task<List<RentingDetailDto>> IBaseRepo<RentingDetailDto>.GetAsync()
+    public async Task<RentingDto?> AddWithDetailsAsync(NewRenting data)
     {
-        throw new NotImplementedException();
+        RentingDetailRepo rentingDetailRepo = new RentingDetailRepo();
+        var renting = await AddAsync(data.rentingDto);
+        if (renting == null)
+        {
+            return null;
+        }
+
+        foreach (var detail in data.rentingDetails)
+        {
+            detail.RentingTransactionId = renting.RentingTransationId;
+            await rentingDetailRepo.AddAsync(detail);
+        }
+
+        return renting;
     }
 
-    Task<RentingDto?> IBaseRepo<RentingDto>.GetByIdAsync(int id)
+    public async Task<RentingDto?> GetByIdCustomerAsync(int id)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<RentingDto?> UpdateAsync(RentingDto customerDto)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<bool> IBaseRepo<RentingDto>.DeleteAsync(int customerId)
-    {
-        throw new NotImplementedException();
+        var entity = await _context.RentingTransactions
+            .Include(o => o.Customer)
+            .FirstOrDefaultAsync(od => od.CustomerId == id);
+        if (entity == null)
+        {
+            return null;
+        }
+        return _mapper.Map<RentingDto>(entity);
     }
 }
