@@ -113,4 +113,6 @@ public class RentingRepo : IRentingRepo
         }
         return entities.Select(dto => _mapper.Map<RentingDto>(dto)).ToList();
     }
+    
+    
 }
