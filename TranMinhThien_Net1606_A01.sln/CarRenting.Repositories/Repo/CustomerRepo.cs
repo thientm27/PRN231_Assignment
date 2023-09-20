@@ -3,6 +3,7 @@ using CarRenting.BusinessObjects.Models;
 using CarRenting.DTOs;
 using CarRenting.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace CarRenting.Repositories.Repo
 {
@@ -25,6 +26,16 @@ namespace CarRenting.Repositories.Repo
 
         public async Task<CustomerDto?> LoginAsync(string email, string password)
         {
+            var adminAccount = GetAdmin();
+            if (email.ToLower() == adminAccount.Email.ToLower() && password == adminAccount.Password)
+            {
+                return new CustomerDto()
+                {
+                    CustomerId = -1
+                };
+            }
+
+            // User check
             var loginCustomer = await _context.Customers.FirstOrDefaultAsync(od =>
                 od.Email.ToLower().Equals(email.ToLower()) && od.Password.Equals(password));
             if (loginCustomer == null)
@@ -34,6 +45,24 @@ namespace CarRenting.Repositories.Repo
 
             return _mapper.Map<CustomerDto>(loginCustomer);
         }
+
+        private AdminAccountInfo GetAdmin()
+        {
+            IConfiguration config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            var adminSection = config.GetSection("AdminAccount");
+            var adminAccount = new AdminAccountInfo
+            {
+                Email = adminSection["Email"],
+                Password = adminSection["Password"]
+            };
+
+            return adminAccount;
+        }
+
 
         public async Task<CustomerDto?> AddAsync(CustomerDto customerDto)
         {
@@ -106,5 +135,11 @@ namespace CarRenting.Repositories.Repo
 
             return false;
         }
+    }
+
+    public class AdminAccountInfo
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }
