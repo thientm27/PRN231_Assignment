@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -12,35 +13,52 @@ namespace CarRenting.Client.Pages.Customer
 {
     public class CreateModel : PageModel
     {
-        private readonly CarRenting.Repositories.Context.FUCarRentingManagementContext _context;
+        private readonly HttpClient _client;
+        private string _api;
 
-        public CreateModel(CarRenting.Repositories.Context.FUCarRentingManagementContext context)
+        public CreateModel()
         {
-            _context = context;
+            _client = new HttpClient();
+            var contentType = new MediaTypeWithQualityHeaderValue("application/json");
+            _client.DefaultRequestHeaders.Accept.Add(contentType);
+            _api = Constants.ApiRenting;
         }
-
+        
         public IActionResult OnGet()
         {
-        ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "Email");
             return Page();
         }
 
-        [BindProperty]
-        public RentingTransaction RentingTransaction { get; set; } = default!;
+        [BindProperty] public RentingTransaction RentingTransaction { get; set; } = default!;
+        [BindProperty] public IList<CarInformation> CarRenting { get; set; } = default!;
+        [BindProperty] public IList<CarInformation> CarAvailable { get; set; } = default!;
+        [BindProperty] public DateTime? StartDay { get; set; }
+        [BindProperty] public DateTime? EndDay { get; set; }
         
-
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _context.RentingTransactions == null || RentingTransaction == null)
+            if (!ModelState.IsValid || RentingTransaction == null)
             {
                 return Page();
             }
-
-            _context.RentingTransactions.Add(RentingTransaction);
-            await _context.SaveChangesAsync();
+            
 
             return RedirectToPage("./Index");
+        }
+        
+        public async Task<IActionResult> OnPostSearchAsync()
+        {
+            if (StartDay == null || EndDay == null)
+            {
+                return await OnPostAsync();
+            }
+
+            if (EndDay <= StartDay)
+            {
+                return await OnPostAsync();
+            }
+
+            return Page();
         }
     }
 }
