@@ -33,7 +33,7 @@ public class RentingController : ControllerBase
         return result;
     }
 
-    [HttpPost]
+    [HttpPost("AvailableCar")]
     public async Task<List<CarInformationDto>> GetAvailableCar(GetAvailableCarRequest data)
     {
         var rentedList = await _rentingDetailRepo.GetCarAlreadyRented(data.StartDateTime, data.EndDateTime);

@@ -87,9 +87,12 @@ public class RentingDetailRepo : IRentingDetailRepo
 
     public async Task<List<int>> GetCarAlreadyRented(DateTime startDay, DateTime endDay)
     {
-        var listRented = await _context.RentingDetails.Where(o => o.StartDate >= startDay && o.EndDate <= endDay)
+        return await _context.RentingDetails
+            .Where(o => (startDay >= o.StartDate && startDay <= o.EndDate)
+                        || (o.StartDate >= startDay && o.EndDate <= endDay)
+                        || (o.StartDate <= endDay && o.EndDate >= endDay))
+            .Select(o => o.CarId)
             .ToListAsync();
-        return listRented.Select(o => o.CarId).ToList();
     }
     
 }
