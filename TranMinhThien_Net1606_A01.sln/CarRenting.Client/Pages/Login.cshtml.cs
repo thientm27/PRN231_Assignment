@@ -24,6 +24,10 @@ namespace CarRenting.Client.Pages
 
         public async Task<IActionResult> OnPostLogin()
         {
+            if (MemberAccount == null)
+            {
+                return Page();
+            }
             var response = await _client.PostAsJsonAsync(_apiUrl + "/login", new LoginRequest()
             {
                 Email = MemberAccount.Email,
@@ -34,11 +38,11 @@ namespace CarRenting.Client.Pages
                 var dataResponse = response.Content.ReadFromJsonAsync<CustomerDto>().Result;
                 if (dataResponse.CustomerId == -1)
                 {
-                    HttpContext.Session.SetObjectAsJson("User", dataResponse);
+                    // HttpContext.Session.SetObjectAsJson("User", dataResponse);
                     return RedirectToPage("./Admin/Customer/Index");
                 }
 
-                HttpContext.Session.SetObjectAsJson("User", dataResponse);
+                // HttpContext.Session.SetObjectAsJson("User", dataResponse);
                 return RedirectToPage("./Admin/Customer/Index");
             }
 
