@@ -11,7 +11,7 @@
 <hr/>
 <div class="row">
     <div class="col-md-4">
-        <form method="post">
+        <form method="post" asp-page-handler="Submit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 @{
@@ -23,14 +23,14 @@
             </div>
             <div class="form-group">
                 <label asp-for="RentingTransaction.TotalPrice" class="control-label"></label>
-                <input asp-for="RentingTransaction.TotalPrice" value="0" class="form-control" readonly="readonly"/>
+                <input asp-for="RentingTransaction.TotalPrice" value="@Model.RentingTransaction.TotalPrice" class="form-control" readonly="readonly"/>
                 <span asp-validation-for="RentingTransaction.TotalPrice" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input hidden="hidden" asp-for="RentingTransaction.CustomerId" value="@Model.RentingTransaction.CustomerId" class="form-control" readonly="readonly"/>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary"/>
+                <input type="submit" value="Submit" class="btn btn-primary"/>
             </div>
         </form>
     </div>

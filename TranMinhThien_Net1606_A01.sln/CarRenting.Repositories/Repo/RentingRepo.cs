@@ -36,12 +36,20 @@ public class RentingRepo : IRentingRepo
 
     public async Task<RentingDto?> AddAsync(RentingDto customerDto)
     {
-        var entity = _mapper.Map<RentingTransaction>(customerDto);
-        // var maxId = await _context.CarInformations.MaxAsync(o => o.CarId);
-        // entity.CarId = maxId + 1;
-        var rEntry = await _context.RentingTransactions.AddAsync(entity);
-        await _context.SaveChangesAsync();
-        return _mapper.Map<RentingDto>(rEntry.Entity);
+        try
+        {
+            var entity = _mapper.Map<RentingTransaction>(customerDto);
+            var maxId = await _context.RentingTransactions.MaxAsync(o => o.RentingTransationId);
+            entity.RentingTransationId = maxId + 1;
+            var rEntry = await _context.RentingTransactions.AddAsync(entity);
+            await _context.SaveChangesAsync();
+            return _mapper.Map<RentingDto>(rEntry.Entity);
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+  
     }
 
     public async Task<RentingDto?> GetByIdAsync(int id)
@@ -87,6 +95,7 @@ public class RentingRepo : IRentingRepo
     public async Task<RentingDto?> AddWithDetailsAsync(NewRenting data)
     {
         RentingDetailRepo rentingDetailRepo = new RentingDetailRepo();
+        data.rentingDto.RentingStatus = 1;
         var renting = await AddAsync(data.rentingDto);
         if (renting == null)
         {

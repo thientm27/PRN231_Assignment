@@ -24,7 +24,7 @@ namespace CarRenting.Client.Pages.Customer
         }
 
         [BindProperty] public IList<RentingDetailDto> RentingDetail { get; set; } = default!;
-        [BindProperty] public RentingTransaction RentingTransaction { get; set; } = default!;
+        [BindProperty] public RentingDto RentingTransaction { get; set; } = default!;
         [BindProperty] public IList<CarInformationDto> CarAvailable { get; set; } = default!;
 
         [BindProperty]
@@ -37,9 +37,15 @@ namespace CarRenting.Client.Pages.Customer
 
         public async Task<IActionResult> OnGetAsync()
         {
+            var userId = HttpContext.Session.GetInt32("User");
+            if (userId == null || userId < 0)
+            {
+                return RedirectToPage("../Login");
+            }
+            
             RentingDetail = HttpContext.Session.GetObjectFromJson<CartItem>("Cart")?.Items ??
                             new List<RentingDetailDto>();
-            RentingTransaction = new RentingTransaction();
+            RentingTransaction = new RentingDto();
             RentingTransaction.RentingDate = DateTime.Today;
             RentingTransaction.TotalPrice = RentingDetail.Sum(o => o.Price);
             return Page();
@@ -47,6 +53,11 @@ namespace CarRenting.Client.Pages.Customer
 
         public async Task<IActionResult> OnPostAsync()
         {
+            var userId = HttpContext.Session.GetInt32("User");
+            if (userId == null || userId < 0)
+            {
+                return RedirectToPage("../Login");
+            }
             if (!ModelState.IsValid || RentingTransaction == null)
             {
                 return Page();
@@ -57,6 +68,12 @@ namespace CarRenting.Client.Pages.Customer
 
         public async Task<IActionResult> OnPostSearch()
         {
+            var userId = HttpContext.Session.GetInt32("User");
+            if (userId == null || userId < 0)
+            {
+                return RedirectToPage("../Login");
+            }
+            
             if (StartDay == null || EndDay == null)
             {
                 return await OnPostAsync();
@@ -105,6 +122,12 @@ namespace CarRenting.Client.Pages.Customer
 
         public async Task<IActionResult> OnPostAdd(int? id)
         {
+            var userId = HttpContext.Session.GetInt32("User");
+            if (userId == null || userId < 0)
+            {
+                return RedirectToPage("../Login");
+            }
+            
             var sessionData = HttpContext.Session.GetObjectFromJson<CartItem>("Cart") ??
                               new CartItem();
             HttpResponseMessage response = await _client.GetAsync(Constants.ApiCarInformation + "/" + id);
@@ -133,11 +156,48 @@ namespace CarRenting.Client.Pages.Customer
 
         public async Task<IActionResult> OnPostRemove(int? id)
         {
+            var userId = HttpContext.Session.GetInt32("User");
+            if (userId == null || userId < 0)
+            {
+                return RedirectToPage("../Login");
+            }
+
             var sessionData = HttpContext.Session.GetObjectFromJson<CartItem>("Cart") ??
                               new CartItem();
             sessionData.Items.RemoveAt((int)id);
             HttpContext.Session.SetObjectAsJson("Cart", sessionData);
             return await OnGetAsync();
+        }
+
+
+        public async Task<IActionResult> OnPostSubmit()
+        {
+            var userId = HttpContext.Session.GetInt32("User");
+            if (userId == null || userId < 0)
+            {
+                return RedirectToPage("../Login");
+            }
+
+            var sessionData = HttpContext.Session.GetObjectFromJson<CartItem>("Cart") ??
+                              new CartItem();
+            RentingTransaction.CustomerId = (int)userId;
+            if (sessionData.Items.Count > 0)
+            {
+                var rentingData = new NewRenting
+                {
+                    rentingDto = RentingTransaction,
+                    rentingDetails = new List<RentingDetailDto>()
+                };
+
+                foreach (var o in sessionData.Items)
+                {
+                    rentingData.rentingDetails.Add(o);
+                }
+
+                await _client.PostAsJsonAsync(_api, rentingData);
+            }
+
+            return RedirectToPage("./Index");
         }
     }
 
