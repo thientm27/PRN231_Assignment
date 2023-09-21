@@ -37,10 +37,11 @@ namespace CarRenting.Client.Pages.Customer
 
         public async Task<IActionResult> OnGetAsync()
         {
-            RentingTransaction = new RentingTransaction();
-            RentingTransaction.RentingDate = DateTime.Today;
             RentingDetail = HttpContext.Session.GetObjectFromJson<CartItem>("Cart")?.Items ??
                             new List<RentingDetailDto>();
+            RentingTransaction = new RentingTransaction();
+            RentingTransaction.RentingDate = DateTime.Today;
+            RentingTransaction.TotalPrice = RentingDetail.Sum(o => o.Price);
             return Page();
         }
 
@@ -77,7 +78,7 @@ namespace CarRenting.Client.Pages.Customer
 
             RentingDetail = HttpContext.Session.GetObjectFromJson<CartItem>("Cart")?.Items ??
                             new List<RentingDetailDto>();
-
+            RentingTransaction.TotalPrice = RentingDetail.Sum(o => o.Price);
             if (response.IsSuccessStatusCode)
             {
                 var ignoreCarTemp = RentingDetail
