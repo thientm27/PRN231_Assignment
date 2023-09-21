@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using CarRenting.BusinessObjects.Models;
-using CarRenting.Repositories.Context;
+using CarRenting.DTOs;
+using CarRenting.DTOs.Request;
+using RazorPage.ViewModels;
 
 namespace CarRenting.Client.Pages.Customer
 {
@@ -23,30 +21,35 @@ namespace CarRenting.Client.Pages.Customer
             _client.DefaultRequestHeaders.Accept.Add(contentType);
             _api = Constants.ApiRenting;
         }
-        
-        public IActionResult OnGet()
-        {
-            return Page();
-        }
 
         [BindProperty] public RentingTransaction RentingTransaction { get; set; } = default!;
-        [BindProperty] public IList<CarInformation> CarRenting { get; set; } = default!;
-        [BindProperty] public IList<CarInformation> CarAvailable { get; set; } = default!;
-        [BindProperty] public DateTime? StartDay { get; set; }
-        [BindProperty] public DateTime? EndDay { get; set; }
-        
+        [BindProperty] public IList<CarInformationDto> CarRenting { get; set; } = default!;
+        [BindProperty] public IList<CarInformationDto> CarAvailable { get; set; } = default!;
+        [BindProperty]    [DataType(DataType.Date)]  public DateTime? StartDay { get; set; }
+        [BindProperty]    [DataType(DataType.Date)]  public DateTime? EndDay { get; set; }
+
+        public void OnGetAsync()
+        {
+            RentingTransaction = new RentingTransaction();
+            RentingTransaction.RentingDate = DateTime.Today;
+            CarRenting = new List<CarInformationDto>();
+            CarAvailable = new List<CarInformationDto>();
+            // Set old time
+            var dateStart = HttpContext.Session.GetObjectFromJson<DateTime>("StartDay");
+            var dateEnd = HttpContext.Session.GetObjectFromJson<DateTime>("EndDay");
+        }
+
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid || RentingTransaction == null)
             {
                 return Page();
             }
-            
 
             return RedirectToPage("./Index");
         }
-        
-        public async Task<IActionResult> OnPostSearchAsync()
+
+        public async Task<IActionResult> OnPostSearch()
         {
             if (StartDay == null || EndDay == null)
             {
@@ -56,6 +59,24 @@ namespace CarRenting.Client.Pages.Customer
             if (EndDay <= StartDay)
             {
                 return await OnPostAsync();
+            }
+
+            var response = await _client.PostAsJsonAsync(_api + "/AvailableCar", new GetAvailableCarRequest()
+            {
+                StartDateTime = (DateTime)StartDay,
+                EndDateTime = (DateTime)EndDay
+            });
+
+            HttpContext.Session.SetObjectAsJson("StartDay", StartDay);
+            HttpContext.Session.SetObjectAsJson("EndDay", EndDay);
+            if (response.IsSuccessStatusCode)
+            {
+                List<CarInformationDto>? dataResponse =
+                    response.Content.ReadFromJsonAsync<List<CarInformationDto>>().Result;
+                if (dataResponse != null)
+                {
+                    CarAvailable = dataResponse;
+                }
             }
 
             return Page();
