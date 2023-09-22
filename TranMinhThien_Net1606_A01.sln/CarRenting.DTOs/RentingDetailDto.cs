@@ -9,5 +9,5 @@ public class RentingDetailDto
     public decimal? Price { get; set; }
     
     public string? CarName { get; set; }
-
+    public virtual CarInformationDto? Car { get; set; }
 }

@@ -20,6 +20,8 @@ public class RentingDetailRepo : IRentingDetailRepo
             cfg.CreateMap<RentingTransaction, RentingDto>();
             cfg.CreateMap<RentingDetailDto, RentingDetail>();
             cfg.CreateMap<RentingDetail, RentingDetailDto>();
+            cfg.CreateMap<CarInformationDto, CarInformation>();
+            cfg.CreateMap<CarInformation, CarInformationDto>();
         });
 
         _mapper = new Mapper(config);

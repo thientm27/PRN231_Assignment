@@ -1,42 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using CarRenting.BusinessObjects.Models;
-using CarRenting.Repositories.Context;
+using CarRenting.DTOs;
 
 namespace CarRenting.Client.Pages.Customer
 {
     public class DetailsModel : PageModel
     {
-        private readonly CarRenting.Repositories.Context.FUCarRentingManagementContext _context;
+        private readonly HttpClient _client;
+        private string _api;
 
-        public DetailsModel(CarRenting.Repositories.Context.FUCarRentingManagementContext context)
+        public DetailsModel()
         {
-            _context = context;
+            _client = new HttpClient();
+            var contentType = new MediaTypeWithQualityHeaderValue("application/json");
+            _client.DefaultRequestHeaders.Accept.Add(contentType);
+            _api = Constants.ApiRenting;
         }
 
-      public RentingTransaction RentingTransaction { get; set; } = default!; 
-
+        public RentingDto RentingTransaction { get; set; } = default!;
+        [BindProperty] public IList<RentingDetailDto> RentingDetail { get; set; } = default!;
+        
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.RentingTransactions == null)
+            HttpResponseMessage response = await _client.GetAsync(_api + "/Renting/" + id);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return NotFound();
+                var dataResponse = response.Content.ReadFromJsonAsync<RentingDto>().Result;
+                if (dataResponse != null)
+                {
+                    RentingTransaction = dataResponse;
+                }
             }
 
-            var rentingtransaction = await _context.RentingTransactions.FirstOrDefaultAsync(m => m.RentingTransationId == id);
-            if (rentingtransaction == null)
+            HttpResponseMessage detailResponse = await _client.GetAsync(_api + "/RentingDetail/" + id);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return NotFound();
+                var dataResponse = detailResponse.Content.ReadFromJsonAsync<List<RentingDetailDto>>().Result;
+                if (dataResponse != null)
+                {
+                    RentingDetail = dataResponse;
+                }
             }
-            else 
-            {
-                RentingTransaction = rentingtransaction;
-            }
+
             return Page();
         }
     }
