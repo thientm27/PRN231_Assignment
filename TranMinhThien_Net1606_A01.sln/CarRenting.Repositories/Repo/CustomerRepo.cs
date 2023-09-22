@@ -124,7 +124,7 @@ namespace CarRenting.Repositories.Repo
 
         public async Task<List<CustomerDto>> GetAsync()
         {
-            var customers = await _context.Customers.Where(od => od.CustomerStatus == 1).ToListAsync();
+            var customers = await _context.Customers.ToListAsync();
             return customers.Select(dto => _mapper.Map<CustomerDto>(dto)).ToList();
         }
 
