@@ -77,7 +77,9 @@ public class CarInformationRepo : ICarInformationRepo
         var carInformation = await _context.CarInformations.FirstOrDefaultAsync(od => od.CarId == id);
         if (carInformation != null)
         {
-            _context.CarInformations.Remove(carInformation);
+            // _context.CarInformations.Remove(carInformation);
+            // await _context.SaveChangesAsync();
+            carInformation.CarStatus = 0;
             await _context.SaveChangesAsync();
             return true;
         }
