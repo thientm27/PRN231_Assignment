@@ -49,7 +49,6 @@ public class RentingRepo : IRentingRepo
         {
             return null;
         }
-  
     }
 
     public async Task<RentingDto?> GetByIdAsync(int id)
@@ -84,11 +83,10 @@ public class RentingRepo : IRentingRepo
         var carInformation = await _context.RentingTransactions.FirstOrDefaultAsync(od => od.RentingTransationId == id);
         if (carInformation != null)
         {
-            _context.RentingTransactions.Remove(carInformation);
+            carInformation.RentingStatus = 0;
             await _context.SaveChangesAsync();
             return true;
         }
-
         return false;
     }
 
@@ -115,13 +113,12 @@ public class RentingRepo : IRentingRepo
     {
         var entities = await _context.RentingTransactions
             .Include(o => o.Customer)
-            .Where(od => od.CustomerId == id).ToListAsync();
+            .Where(od => od.CustomerId == id && od.RentingStatus != 0).ToListAsync();
         if (entities == null || entities.Count == 0)
         {
             return null;
         }
+
         return entities.Select(dto => _mapper.Map<RentingDto>(dto)).ToList();
     }
-    
-    
 }

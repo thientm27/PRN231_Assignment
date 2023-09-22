@@ -53,4 +53,11 @@ public class RentingController : ControllerBase
         var result = listCar.Where(o => !rentedList.Contains(o.CarId)).ToList();
         return result;
     }
+    
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _repository.DeleteAsync(id);
+        return Ok();
+    }
 }
