@@ -27,6 +27,8 @@ namespace CarRenting.Client.Pages.Customer
         [BindProperty] public RentingDto RentingTransaction { get; set; } = default!;
         [BindProperty] public IList<CarInformationDto> CarAvailable { get; set; } = default!;
 
+        [BindProperty] public string Error { get; set; }
+
         [BindProperty]
         [DataType(DataType.Date)]
         public DateTime? StartDay { get; set; }
@@ -42,7 +44,7 @@ namespace CarRenting.Client.Pages.Customer
             {
                 return RedirectToPage("../Login");
             }
-            
+
             RentingDetail = HttpContext.Session.GetObjectFromJson<CartItem>("Cart")?.Items ??
                             new List<RentingDetailDto>();
             RentingTransaction = new RentingDto();
@@ -51,20 +53,6 @@ namespace CarRenting.Client.Pages.Customer
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            var userId = HttpContext.Session.GetInt32("User");
-            if (userId == null || userId < 0)
-            {
-                return RedirectToPage("../Login");
-            }
-            if (!ModelState.IsValid || RentingTransaction == null)
-            {
-                return Page();
-            }
-
-            return RedirectToPage("./Index");
-        }
 
         public async Task<IActionResult> OnPostSearch()
         {
@@ -73,17 +61,20 @@ namespace CarRenting.Client.Pages.Customer
             {
                 return RedirectToPage("../Login");
             }
-            
+
             if (StartDay == null || EndDay == null)
             {
-                return await OnPostAsync();
+                Error = "Pleas pick date to search car";
+                return await OnGetAsync();
             }
 
             if (EndDay <= StartDay)
             {
-                return await OnPostAsync();
+                Error = "EndDay must > StartDay";
+                return await OnGetAsync();
             }
 
+            Error = "";
             var response = await _client.PostAsJsonAsync(_api + "/AvailableCar", new GetAvailableCarRequest()
             {
                 StartDateTime = (DateTime)StartDay,
@@ -127,7 +118,7 @@ namespace CarRenting.Client.Pages.Customer
             {
                 return RedirectToPage("../Login");
             }
-            
+
             var sessionData = HttpContext.Session.GetObjectFromJson<CartItem>("Cart") ??
                               new CartItem();
             HttpResponseMessage response = await _client.GetAsync(Constants.ApiCarInformation + "/" + id);
@@ -175,6 +166,7 @@ namespace CarRenting.Client.Pages.Customer
             var userId = HttpContext.Session.GetInt32("User");
             if (userId == null || userId < 0)
             {
+                HttpContext.Session.SetObjectAsJson("Cart", null);
                 return RedirectToPage("../Login");
             }
 
@@ -197,6 +189,7 @@ namespace CarRenting.Client.Pages.Customer
                 await _client.PostAsJsonAsync(_api, rentingData);
             }
 
+            HttpContext.Session.SetObjectAsJson("Cart", null);
             return RedirectToPage("./Index");
         }
     }
