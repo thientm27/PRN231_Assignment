@@ -34,7 +34,15 @@ public class CarInformationRepo : ICarInformationRepo
             .ToListAsync();
         return entities.Select(dto => _mapper.Map<CarInformationDto>(dto)).ToList();
     }
-
+    public async Task<List<CarInformationDto>> GetCarAvailable()
+    {
+        var entities = await _context.CarInformations
+            .Include(o => o.Manufacturer)
+            .Include(o => o.Supplier)
+            .Where(o => o.CarStatus != 0)
+            .ToListAsync();
+        return entities.Select(dto => _mapper.Map<CarInformationDto>(dto)).ToList();
+    }
     public async Task<CarInformationDto?> AddAsync(CarInformationDto dataDto)
     {
         var entity = _mapper.Map<CarInformation>(dataDto);

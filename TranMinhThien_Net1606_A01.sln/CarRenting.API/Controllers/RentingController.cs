@@ -49,7 +49,7 @@ public class RentingController : ControllerBase
     public async Task<List<CarInformationDto>> GetAvailableCar(GetAvailableCarRequest data)
     {
         var rentedList = await _rentingDetailRepo.GetCarAlreadyRented(data.StartDateTime, data.EndDateTime);
-        var listCar = await _carInformationRepo.GetAsync();
+        var listCar = await _carInformationRepo.GetCarAvailable();
         var result = listCar.Where(o => !rentedList.Contains(o.CarId)).ToList();
         return result;
     }
