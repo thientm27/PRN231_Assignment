@@ -37,7 +37,8 @@ namespace CarRenting.Repositories.Repo
 
             // User check
             var loginCustomer = await _context.Customers.FirstOrDefaultAsync(od =>
-                od.Email.ToLower().Equals(email.ToLower()) && od.Password.Equals(password));
+                od.Email.ToLower().Equals(email.ToLower()) && od.Password.Equals(password)
+                && od.CustomerStatus != 0);// not deleted account
             if (loginCustomer == null)
             {
                 return null;
@@ -67,7 +68,9 @@ namespace CarRenting.Repositories.Repo
         public async Task<CustomerDto?> AddAsync(CustomerDto customerDto)
         {
             var existedEmail =
-                _context.Customers.FirstOrDefault(od => od.Email.ToLower().Equals(customerDto.Email.ToLower()));
+                _context.Customers.FirstOrDefault(od =>
+                    od.Email.ToLower().Equals(customerDto.Email.ToLower())
+                    && od.CustomerStatus != 0);
             if (existedEmail != null)
             {
                 return null;
@@ -94,7 +97,9 @@ namespace CarRenting.Repositories.Repo
         {
             var existedEmail =
                 _context.Customers.FirstOrDefault(od =>
-                    od.Email.ToLower().Equals(customerDto.Email.ToLower()) && od.CustomerId != customerDto.CustomerId);
+                    od.Email.ToLower().Equals(customerDto.Email.ToLower()) 
+                    && od.CustomerId != customerDto.CustomerId
+                    && od.CustomerStatus != 0);
             if (existedEmail != null)
             {
                 return null;
