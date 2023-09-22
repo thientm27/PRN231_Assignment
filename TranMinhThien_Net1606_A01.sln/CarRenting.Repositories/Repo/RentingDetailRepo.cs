@@ -57,6 +57,20 @@ public class RentingDetailRepo : IRentingDetailRepo
         return null;
     }
 
+    public async Task<List<RentingDetailDto>?> GetsByIdAsync(int id)
+    {
+        var entities = await _context.RentingDetails
+            .Include(o => o.Car)
+            .Where(od => od.RentingTransactionId == id).ToListAsync();
+        if (entities == null || entities.Count == 0)
+        {
+            return null;
+        }
+
+        return entities.Select(dto => _mapper.Map<RentingDetailDto>(dto)).ToList();
+    }
+
+
     [Obsolete("This method cannot use")]
     public async Task<RentingDetailDto?> GetByIdAsync(int id)
     {
@@ -94,5 +108,4 @@ public class RentingDetailRepo : IRentingDetailRepo
             .Select(o => o.CarId)
             .ToListAsync();
     }
-    
 }

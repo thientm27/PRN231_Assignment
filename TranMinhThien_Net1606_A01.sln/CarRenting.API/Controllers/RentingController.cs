@@ -26,6 +26,18 @@ public class RentingController : ControllerBase
         return await _repository.GetByIdCustomerAsync(id);
     }
 
+    [HttpGet("RentingDetail/{id}")]
+    public async Task<List<RentingDetailDto>?> GetDetailsById(int id)
+    {
+        return await _rentingDetailRepo.GetsByIdAsync(id);
+    }
+
+    [HttpGet("Renting/{id}")]
+    public async Task<RentingDto?> GetRentingById(int id)
+    {
+        return await _repository.GetByIdAsync(id);
+    }
+
     [HttpPost]
     public async Task<RentingDto?> CreateRenting(NewRenting data)
     {
