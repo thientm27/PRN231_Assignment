@@ -16,32 +16,32 @@
             <input type="hidden" asp-for="CarInformation.CarId" />
             <div class="form-group">
                 <label asp-for="CarInformation.CarName" class="control-label"></label>
-                <input asp-for="CarInformation.CarName" class="form-control" />
+                <input asp-for="CarInformation.CarName" class="form-control" required/>
                 <span asp-validation-for="CarInformation.CarName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CarInformation.CarDescription" class="control-label"></label>
-                <input asp-for="CarInformation.CarDescription" class="form-control" />
+                <input asp-for="CarInformation.CarDescription" class="form-control" required/>
                 <span asp-validation-for="CarInformation.CarDescription" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CarInformation.NumberOfDoors" class="control-label"></label>
-                <input asp-for="CarInformation.NumberOfDoors" class="form-control" />
+                <input asp-for="CarInformation.NumberOfDoors" class="form-control" required/>
                 <span asp-validation-for="CarInformation.NumberOfDoors" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CarInformation.SeatingCapacity" class="control-label"></label>
-                <input asp-for="CarInformation.SeatingCapacity" class="form-control" />
+                <input asp-for="CarInformation.SeatingCapacity" class="form-control" required />
                 <span asp-validation-for="CarInformation.SeatingCapacity" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CarInformation.FuelType" class="control-label"></label>
-                <input asp-for="CarInformation.FuelType" class="form-control" />
+                <input asp-for="CarInformation.FuelType" class="form-control" required/>
                 <span asp-validation-for="CarInformation.FuelType" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CarInformation.Year" class="control-label"></label>
-                <input asp-for="CarInformation.Year" class="form-control" />
+                <input asp-for="CarInformation.Year" class="form-control" required/>
                 <span asp-validation-for="CarInformation.Year" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -56,7 +56,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="CarInformation.CarStatus" class="control-label"></label>
-                <input asp-for="CarInformation.CarStatus" class="form-control" />
+                <input asp-for="CarInformation.CarStatus" class="form-control" required />
                 <span asp-validation-for="CarInformation.CarStatus" class="text-danger"></span>
             </div>
             <div class="form-group">

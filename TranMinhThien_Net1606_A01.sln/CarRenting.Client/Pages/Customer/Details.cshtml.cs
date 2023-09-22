@@ -21,7 +21,8 @@ namespace CarRenting.Client.Pages.Customer
 
         public RentingDto RentingTransaction { get; set; } = default!;
         [BindProperty] public IList<RentingDetailDto> RentingDetail { get; set; } = default!;
-        
+        public bool DeleteAble { get; set; }
+
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             HttpResponseMessage response = await _client.GetAsync(_api + "/Renting/" + id);
@@ -41,6 +42,17 @@ namespace CarRenting.Client.Pages.Customer
                 if (dataResponse != null)
                 {
                     RentingDetail = dataResponse;
+                }
+            }
+
+            DeleteAble = true;
+            var today = DateTime.Today;
+            foreach (var o in RentingDetail)
+            {
+                if (o.StartDate <= today)
+                {
+                    DeleteAble = false;
+                    break; 
                 }
             }
 

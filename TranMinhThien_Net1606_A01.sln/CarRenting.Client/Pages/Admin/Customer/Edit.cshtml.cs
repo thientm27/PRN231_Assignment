@@ -23,6 +23,12 @@ namespace CarRenting.Client.Pages.Admin.Customer
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
+            var userId = HttpContext.Session.GetInt32("User");
+            if (userId == null || userId != -1)
+            {
+                return RedirectToPage("../../Login");
+            }
+            
             HttpResponseMessage response = await _client.GetAsync(_productApiUrl + "/" + id);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {

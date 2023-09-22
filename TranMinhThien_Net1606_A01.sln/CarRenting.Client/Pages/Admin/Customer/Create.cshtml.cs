@@ -20,6 +20,12 @@ namespace CarRenting.Client.Pages.Admin.Customer
 
         public IActionResult OnGet()
         {
+            var userId = HttpContext.Session.GetInt32("User");
+            if (userId == null || userId != -1)
+            {
+                return RedirectToPage("../../Login");
+            }
+            
             return Page();
         }
 

@@ -24,6 +24,12 @@ namespace CarRenting.Client.Pages.Admin.CarInformation
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
+            var userId = HttpContext.Session.GetInt32("User");
+            if (userId == null || userId != -1)
+            {
+                return RedirectToPage("../../Login");
+            }
+            
             HttpResponseMessage response = await _client.GetAsync(_carInformationApiUrl + "/" + id);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {

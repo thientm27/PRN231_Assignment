@@ -28,9 +28,14 @@ namespace CarRenting.Client.Pages.Admin.Customer
 
         public IList<CustomerDto> Customer { get; set; } = default!;
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
-        
+            var userId = HttpContext.Session.GetInt32("User");
+            if (userId == null || userId != -1)
+            {
+                return RedirectToPage("../../Login");
+            }
+            
             HttpResponseMessage response = await _client.GetAsync(_productApiUrl);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -40,7 +45,8 @@ namespace CarRenting.Client.Pages.Admin.Customer
                     Customer = dataResponse;
                 }
             }
-            
+
+            return Page();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using CarRenting.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CarRenting.Client.Pages.Admin.CarInformation
 {
@@ -19,8 +20,14 @@ namespace CarRenting.Client.Pages.Admin.CarInformation
 
         public IList<CarInformationDto> CarInformation { get;set; } = default!;
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
+            var userId = HttpContext.Session.GetInt32("User");
+            if (userId == null || userId != -1)
+            {
+                return RedirectToPage("../../Login");
+            }
+            
             HttpResponseMessage response = await _client.GetAsync(_carInformationApiUrl);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -30,6 +37,8 @@ namespace CarRenting.Client.Pages.Admin.CarInformation
                     CarInformation = dataResponse;
                 }
             }
+
+            return Page();
         }
     }
 }
