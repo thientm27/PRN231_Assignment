@@ -1,14 +1,18 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarRenting.DTOs;
 
 public class CustomerDto
 {
-    public int CustomerID { get; set; } 
-    public string? CustomerName { get; set; }
-    public string? Telephone { get; set; }
-    public string Email { get; set; } = null!;
-    [DataType(DataType.Date)] public DateTime? CustomerBirthday { get; set; }
-    public byte? CustomerStatus { get; set; }
-    public string? Password { get; set; }
+    [Key]
+    public int CustomerID { get; set; }
+    public string CustomerName { get; set; }
+    public string Mobile { get; set; }
+    public DateTime Birthday { get; set; }
+    public string IdentityCard { get; set; }
+    public string LicenceNumber { get; set; }
+    public DateTime LicenceDate { get; set; }
+    public string Email { get; set; }
+    public string Password { get; set; }
 }

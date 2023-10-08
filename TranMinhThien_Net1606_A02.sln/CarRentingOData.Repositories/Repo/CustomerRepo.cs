@@ -138,10 +138,7 @@ namespace CarRenting.Repositories.Repo
             return false;
         }
 
-        Task<CustomerDto?> ICustomerRepo.LoginAsync(string email, string password)
-        {
-            throw new NotImplementedException();
-        }
+
     }
 
     public class AdminAccountInfo
