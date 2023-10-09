@@ -15,7 +15,5 @@ namespace CarRentingOData.DTOs
 
         public string Country { get; set; }
 
-        // Navigation property to represent the one-to-many relationship
-        public List<CarDto> Cars { get; set; }
     }
 }

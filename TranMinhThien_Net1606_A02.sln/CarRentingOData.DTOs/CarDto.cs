@@ -25,6 +25,6 @@ public class CarDto
     public string Status { get; set; }
 
     // Navigation property to represent the many-to-one relationship
-    public CarProducerDto CarProducer { get; set; }
+    public CarProducerDto? CarProducer { get; set; }
 }
 

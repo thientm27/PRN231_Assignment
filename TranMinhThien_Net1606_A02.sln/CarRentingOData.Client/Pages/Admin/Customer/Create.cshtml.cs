@@ -35,7 +35,7 @@ namespace CarRenting.Client.Pages.Admin.Customer
 
         public async Task<IActionResult> OnPostAsync()
         {
-          
+         
                 HttpResponseMessage response = await _client.PostAsJsonAsync(_productApiUrl, Customer);
                 if (response.IsSuccessStatusCode)
                 {

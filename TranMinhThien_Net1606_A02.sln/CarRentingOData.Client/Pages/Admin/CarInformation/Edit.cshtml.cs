@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using CarRenting.DTOs;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using CarRentingOData.DTOs;
+using CarRentingOData.DTOs.Response;
 
 namespace CarRenting.Client.Pages.Admin.CarInformation
 {
@@ -42,13 +43,12 @@ namespace CarRenting.Client.Pages.Admin.CarInformation
             }
 
 
-            var manuData = await _client.GetAsync(Constants.ApiString + Constants.CarProducer);
-
+            var manuData = await _client.GetAsync(Constants.OdataString + Constants.CarProducer);
             if (manuData.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                var data1 = manuData.Content.ReadFromJsonAsync<List<CarProducerDto>>().Result;
-                ViewData["ManufacturerId"] =
-                    new SelectList(data1, "ManufacturerId", "ManufacturerName");
+                var data1 = manuData.Content.ReadFromJsonAsync<ODataResponse<CarProducerDto>>().Result;
+                ViewData["ProducerID"] =
+                    new SelectList(data1.Value, "ProducerID", "ProducerName");
             }
 
             return Page();
@@ -86,23 +86,21 @@ namespace CarRenting.Client.Pages.Admin.CarInformation
             if (error)
             {
 
-                var manuData = await _client.GetAsync(Constants.ApiString + Constants.CarProducer);
 
+                var manuData = await _client.GetAsync(Constants.OdataString + Constants.CarProducer);
                 if (manuData.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    var data1 = manuData.Content.ReadFromJsonAsync<List<CarProducerDto>>().Result;
+                    var data1 = manuData.Content.ReadFromJsonAsync<ODataResponse<CarProducerDto>>().Result;
                     ViewData["ProducerID"] =
-                        new SelectList(data1, "ProducerID", "ProducerName");
+                        new SelectList(data1.Value, "ProducerID", "ProducerName");
                 }
 
                 return Page();
             }
 
-            if (ModelState.IsValid)
-            {
+      
                 HttpResponseMessage response =
                     await _client.PutAsJsonAsync(_carInformationApiUrl + "/" + CarInformation.CarID, CarInformation);
-            }
 
             return RedirectToPage("./Index");
         }

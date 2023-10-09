@@ -6,12 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 
 namespace CarRenting.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class CustomerController : ControllerBase
+public class CustomerController : ODataController
 {
     private readonly ICustomerRepo _repository = new CustomerRepo();
 

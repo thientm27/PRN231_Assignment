@@ -1,5 +1,6 @@
 using CarRenting.DTOs;
 using CarRentingOData.BOs;
+using CarRentingOData.DTOs;
 using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.OData.Routing;
 using Microsoft.OData.Edm;
@@ -61,6 +62,8 @@ app.Run();
 static IEdmModel GetEdmModel()
 {
     ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
-    builder.EntitySet<CustomerDto>("Customers");
+    builder.EntitySet<CustomerDto>("Customer");
+    builder.EntitySet<CarDto>("Car");
+    builder.EntitySet<CarProducerDto>("CarProducer");
     return builder.GetEdmModel();
 }
