@@ -1,0 +1,89 @@
+﻿@page
+@model CarRenting.Client.Pages.Admin.CarInformation.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CarInformation[0].CarID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CarInformation[0].CarName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CarInformation[0].CarModelYear)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CarInformation[0].Color)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CarInformation[0].Capacity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CarInformation[0].Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CarInformation[0].ImportDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CarInformation[0].RentPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CarInformation[0].Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CarInformation[0].CarProducer)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.CarInformation) {
+        <tr>
+            <td>
+                    @Html.DisplayFor(modelItem => item.CarID)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.CarName)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.CarModelYear)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Color)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Capacity)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.ImportDate)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.RentPrice)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.CarProducer.ProducerName)
+            </td>
+            <td>
+                    <a asp-page="./Edit" asp-route-id="@item.CarID">Edit</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.CarID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

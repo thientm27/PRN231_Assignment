@@ -1,0 +1,76 @@
+﻿@page
+@model CarRenting.Client.Pages.Admin.CarInformation.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>CarInformation</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="CarInformation.CarID" />
+            <div class="form-group">
+                <label asp-for="CarInformation.CarName" class="control-label"></label>
+                <input asp-for="CarInformation.CarName" class="form-control" required/>
+                <span asp-validation-for="CarInformation.CarName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CarInformation.CarModelYear" class="control-label"></label>
+                <input asp-for="CarInformation.CarModelYear" class="form-control" required />
+                <span asp-validation-for="CarInformation.CarModelYear" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CarInformation.Color" class="control-label"></label>
+                <input asp-for="CarInformation.Color" class="form-control" required />
+                <span asp-validation-for="CarInformation.Color" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CarInformation.Capacity" class="control-label"></label>
+                <input asp-for="CarInformation.Capacity" class="form-control" required />
+                <span asp-validation-for="CarInformation.Capacity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CarInformation.Description" class="control-label"></label>
+                <input asp-for="CarInformation.Description" class="form-control" required />
+                <span asp-validation-for="CarInformation.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CarInformation.ImportDate" class="control-label"></label>
+                <input asp-for="CarInformation.ImportDate" class="form-control" required />
+                <span asp-validation-for="CarInformation.ImportDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CarInformation.ProducerID" class="control-label"></label>
+                <select asp-for="CarInformation.ProducerID" class="form-control" asp-items="ViewBag.ManufacturerId"></select>
+                <span asp-validation-for="CarInformation.ProducerID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CarInformation.RentPrice" class="control-label"></label>
+                <input asp-for="CarInformation.RentPrice" class="form-control" />
+                <span asp-validation-for="CarInformation.RentPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CarInformation.Status" class="control-label"></label>
+                <input asp-for="CarInformation.Status" class="form-control" required />
+                <span asp-validation-for="CarInformation.Status" class="text-danger"></span>
+            </div>
+         
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -3,9 +3,8 @@
 public class Constants
 {
     public static readonly string ApiString = "https://localhost:7086/api";
-    public static string CarInformation = "/CarInformation";
+    public static string CarInformation = "/Car";
     public static string Customer = "/Customer";
-    public static string Supplier = "/Supplier";
-    public static string Manufacture = "/Manufacture";
+    public static string CarProducer = "/CarProducer";
     public static string Renting = "/Renting";
 }
