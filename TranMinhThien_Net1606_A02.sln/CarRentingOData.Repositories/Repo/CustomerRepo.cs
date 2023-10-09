@@ -132,6 +132,8 @@ namespace CarRenting.Repositories.Repo
             var existingCustomer = await _context.Customers.FirstOrDefaultAsync(od => od.CustomerID == customerId);
             if (existingCustomer != null)
             {
+                _context.Customers.Remove(existingCustomer);
+                await _context.SaveChangesAsync();
                 return true;
             }
 

@@ -50,7 +50,7 @@ public class CustomerController : ControllerBase
 
     [HttpDelete("{id}")]
     [EnableQuery]
-    public async Task<IActionResult> Delete([FromBody] int id)
+    public async Task<IActionResult> Delete( int id)
     {
 
         var customer = await _repository.GetByIdAsync(id);
