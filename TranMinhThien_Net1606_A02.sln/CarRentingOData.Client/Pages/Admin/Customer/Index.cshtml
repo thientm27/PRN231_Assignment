@@ -1,0 +1,84 @@
+﻿@page
+@model CarRenting.Client.Pages.Admin.Customer.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer[0].CustomerID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer[0].CustomerName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer[0].Mobile)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer[0].Birthday)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer[0].IdentityCard)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer[0].LicenceNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer[0].LicenceDate)
+            </th>       
+            <th>
+                @Html.DisplayNameFor(model => model.Customer[0].Email)
+            </th>
+               <th>
+                @Html.DisplayNameFor(model => model.Customer[0].Password)
+            </th>
+       
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Customer) {
+        <tr>
+            <td>
+                    @Html.DisplayFor(modelItem => item.CustomerID)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.CustomerName)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Mobile)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Birthday)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.IdentityCard)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.LicenceNumber)
+            </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LicenceDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Password)
+                </td>
+            <td>
+                    <a asp-page="./Edit" asp-route-id="@item.CustomerID">Edit</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.CustomerID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
