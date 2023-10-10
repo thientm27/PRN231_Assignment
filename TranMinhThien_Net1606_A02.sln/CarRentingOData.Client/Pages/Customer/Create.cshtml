@@ -1,80 +1,54 @@
-﻿@* @page
+﻿@page
 @model CarRenting.Client.Pages.Customer.CreateModel
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Create new order</h1>
 
-<h4>RentingTransaction</h4>
+<h4>Your Cart</h4>
 
 <p style="color: red"> @Model.Error</p>
 <hr/>
-<div class="row">
-    <div class="col-md-4">
-        <form method="post" asp-page-handler="Submit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                @{
-                    var today = DateTime.Today;
-                }
-                <label asp-for="RentingTransaction.RentingDate" class="control-label"></label>
-                <input asp-for="RentingTransaction.RentingDate" value="@today.ToString("yyyy-MM-dd")" readonly="readonly" class="form-control"/>
-                <span asp-validation-for="RentingTransaction.RentingDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RentingTransaction.TotalPrice" class="control-label"></label>
-                <input asp-for="RentingTransaction.TotalPrice" value="@Model.RentingTransaction.TotalPrice" class="form-control" readonly="readonly"/>
-                <span asp-validation-for="RentingTransaction.TotalPrice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input hidden="hidden" asp-for="RentingTransaction.CustomerId" value="@Model.RentingTransaction.CustomerId" class="form-control" readonly="readonly"/>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Submit" class="btn btn-primary"/>
-            </div>
-        </form>
-    </div>
-</div>
 
 <h4>Your renting</h4>
 <table class="table">
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.RentingDetail[0].StartDate)
+                @Html.DisplayNameFor(model => model.RentingTemp[0].PickupDate)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.RentingDetail[0].EndDate)
+                @Html.DisplayNameFor(model => model.RentingTemp[0].ReturnDate)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.RentingDetail[0].Price)
+                @Html.DisplayNameFor(model => model.RentingTemp[0].RentPrice)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RentingDetail[0].CarName)
-        </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RentingTemp[0].Car)
+            </th>
         <th></th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model.RentingDetail)
+    @foreach (var item in Model.RentingTemp)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
+                    @Html.DisplayFor(modelItem => item.PickupDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
+                    @Html.DisplayFor(modelItem => item.ReturnDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Price)
+                    @Html.DisplayFor(modelItem => item.RentPrice)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CarName)
+                    @Html.DisplayFor(modelItem => item.Car.CarName)
             </td>
             <td>
-                <form asp-page="./Create" method="post" asp-page-handler="Remove" asp-route-id="@Model.RentingDetail.IndexOf(item)">
+                <form asp-page="./Create" method="post" asp-page-handler="Remove" asp-route-id="@Model.RentingTemp.IndexOf(item)">
                     <button type="submit">Remove</button>
                 </form>
             </td>
@@ -116,31 +90,25 @@
             @Html.DisplayNameFor(model => model.CarAvailable[0].CarName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CarAvailable[0].CarDescription)
+                @Html.DisplayNameFor(model => model.CarAvailable[0].CarModelYear)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CarAvailable[0].NumberOfDoors)
+                @Html.DisplayNameFor(model => model.CarAvailable[0].Color)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CarAvailable[0].SeatingCapacity)
+                @Html.DisplayNameFor(model => model.CarAvailable[0].Capacity)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CarAvailable[0].FuelType)
+                @Html.DisplayNameFor(model => model.CarAvailable[0].Description)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CarAvailable[0].Year)
+                @Html.DisplayNameFor(model => model.CarAvailable[0].ImportDate)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CarAvailable[0].CarStatus)
+                @Html.DisplayNameFor(model => model.CarAvailable[0].RentPrice)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CarAvailable[0].CarRentingPricePerDay)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CarAvailable[0].Manufacturer)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CarAvailable[0].Supplier)
+                @Html.DisplayNameFor(model => model.CarAvailable[0].CarProducer)
         </th>
         <th></th>
     </tr>
@@ -153,34 +121,28 @@
                 @Html.DisplayFor(modelItem => item.CarName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CarDescription)
+                    @Html.DisplayFor(modelItem => item.CarModelYear)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.NumberOfDoors)
+                    @Html.DisplayFor(modelItem => item.Color)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SeatingCapacity)
+                    @Html.DisplayFor(modelItem => item.Capacity)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FuelType)
+                    @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Year)
+                    @Html.DisplayFor(modelItem => item.ImportDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CarStatus)
+                    @Html.DisplayFor(modelItem => item.RentPrice)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CarRentingPricePerDay)
+                    @Html.DisplayFor(modelItem => item.CarProducer.ProducerName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Manufacturer.ManufacturerName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Supplier.SupplierName)
-            </td>
-            <td>
-                <form asp-page="./Create" method="post" asp-page-handler="Add" asp-route-id="@item.CarId">
+                <form asp-page="./Create" method="post" asp-page-handler="Add" asp-route-id="@item.CarID">
                     <input type="hidden" asp-for="@Model.StartDay"/>
                     <input type="hidden" asp-for="@Model.EndDay"/>
                     <input type="hidden" asp-for="@Model.CarAvailable"/>
@@ -198,4 +160,4 @@
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-} *@
+}

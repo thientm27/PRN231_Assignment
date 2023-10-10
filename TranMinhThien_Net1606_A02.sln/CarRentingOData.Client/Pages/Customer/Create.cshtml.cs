@@ -1,200 +1,204 @@
-﻿//using System.ComponentModel.DataAnnotations;
-//using System.Net.Http.Headers;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.AspNetCore.Mvc.RazorPages;
-//using CarRenting.DTOs;
-//using CarRenting.DTOs.Request;
-//using RazorPage.ViewModels;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using CarRenting.DTOs;
+using CarRenting.DTOs.Request;
+using RazorPage.ViewModels;
+using CarRentingOData.DTOs;
+using CarRentingOData.DTOs.Request;
+using CarRentingOData.DTOs.Response;
 
-//namespace CarRenting.Client.Pages.Customer
-//{
-//    public class CreateModel : PageModel
-//    {
-//        private readonly HttpClient _client;
-//        private string _api;
+namespace CarRenting.Client.Pages.Customer
+{
+    public class CreateModel : PageModel
+    {
+        private readonly HttpClient _client;
+        private string _api;
 
-//        public CreateModel()
-//        {
-//            _client = new HttpClient();
-//            var contentType = new MediaTypeWithQualityHeaderValue("application/json");
-//            _client.DefaultRequestHeaders.Accept.Add(contentType);
-//            _api = Constants.ApiRenting;
-//            CarAvailable = new List<CarInformationDto>();
-//        }
+        public CreateModel()
+        {
+            _client = new HttpClient();
+            var contentType = new MediaTypeWithQualityHeaderValue("application/json");
+            _client.DefaultRequestHeaders.Accept.Add(contentType);
+            _api = Constants.ApiString + Constants.Renting;
+            CarAvailable = new List<CarDto>();
+        }
 
-//        [BindProperty] public IList<RentingDetailDto> RentingDetail { get; set; } = default!;
-//        [BindProperty] public RentingDto RentingTransaction { get; set; } = default!;
-//        [BindProperty] public IList<CarInformationDto> CarAvailable { get; set; } = default!;
+        [BindProperty] public IList<CarRentalDto> RentingTemp { get; set; } = default!;
+        [BindProperty] public CarRentalDto RentingTransaction { get; set; } = default!;
+        [BindProperty] public IList<CarDto> CarAvailable { get; set; } = default!;
 
-//        [BindProperty] public string Error { get; set; }
+        [BindProperty] public string Error { get; set; }
 
-//        [BindProperty]
-//        [DataType(DataType.Date)]
-//        public DateTime? StartDay { get; set; }
+        [BindProperty]
+        [DataType(DataType.Date)]
+        public DateTime? StartDay { get; set; }
 
-//        [BindProperty]
-//        [DataType(DataType.Date)]
-//        public DateTime? EndDay { get; set; }
+        [BindProperty]
+        [DataType(DataType.Date)]
+        public DateTime? EndDay { get; set; }
 
-//        public async Task<IActionResult> OnGetAsync()
-//        {
-//            var userId = HttpContext.Session.GetInt32("User");
-//            if (userId == null || userId < 0)
-//            {
-//                return RedirectToPage("../Login");
-//            }
+        public async Task<IActionResult> OnGetAsync()
+        {
+            var userId = HttpContext.Session.GetInt32("User");
+            if (userId == null || userId < 0)
+            {
+                return RedirectToPage("../Login");
+            }
 
-//            RentingDetail = HttpContext.Session.GetObjectFromJson<CartItem>("Cart")?.Items ??
-//                            new List<RentingDetailDto>();
-//            RentingTransaction = new RentingDto();
-//            RentingTransaction.RentingDate = DateTime.Today;
-//            RentingTransaction.TotalPrice = RentingDetail.Sum(o => o.Price);
-//            return Page();
-//        }
+            RentingTemp = HttpContext.Session.GetObjectFromJson<NewRenting>("Cart")?.Values ??
+                            new List<CarRentalDto>();
 
-
-//        public async Task<IActionResult> OnPostSearch()
-//        {
-//            var userId = HttpContext.Session.GetInt32("User");
-//            if (userId == null || userId < 0)
-//            {
-//                return RedirectToPage("../Login");
-//            }
-
-//            if (StartDay == null || EndDay == null)
-//            {
-//                Error = "Pleas pick date to search car";
-//                return await OnGetAsync();
-//            }
-
-//            if (EndDay <= StartDay)
-//            {
-//                Error = "EndDay must > StartDay";
-//                return await OnGetAsync();
-//            }
-
-//            Error = "";
-//            var response = await _client.PostAsJsonAsync(_api + "/AvailableCar", new GetAvailableCarRequest()
-//            {
-//                StartDateTime = (DateTime)StartDay,
-//                EndDateTime = (DateTime)EndDay
-//            });
-
-//            HttpContext.Session.SetObjectAsJson("StartDay", StartDay);
-//            HttpContext.Session.SetObjectAsJson("EndDay", EndDay);
-
-//            RentingDetail = HttpContext.Session.GetObjectFromJson<CartItem>("Cart")?.Items ??
-//                            new List<RentingDetailDto>();
-//            RentingTransaction.TotalPrice = RentingDetail.Sum(o => o.Price);
-//            if (response.IsSuccessStatusCode)
-//            {
-//                var ignoreCarTemp = RentingDetail
-//                    .Where(o => (StartDay >= o.StartDate && StartDay <= o.EndDate)
-//                                || (o.StartDate >= StartDay && o.EndDate <= EndDay)
-//                                || (o.StartDate <= EndDay && o.EndDate >= EndDay))
-//                    .Select(o => o.CarId)
-//                    .ToList();
-
-//                var availableCar = await response.Content.ReadFromJsonAsync<List<CarInformationDto>>();
-//                if (availableCar != null)
-//                {
-//                    var result = availableCar.Where(o => !ignoreCarTemp.Contains(o.CarId)).ToList();
-//                    CarAvailable = result;
-//                }
-//                else
-//                {
-//                    CarAvailable = new List<CarInformationDto>();
-//                }
-//            }
-
-//            return Page();
-//        }
-
-//        public async Task<IActionResult> OnPostAdd(int? id)
-//        {
-//            var userId = HttpContext.Session.GetInt32("User");
-//            if (userId == null || userId < 0)
-//            {
-//                return RedirectToPage("../Login");
-//            }
-
-//            var sessionData = HttpContext.Session.GetObjectFromJson<CartItem>("Cart") ??
-//                              new CartItem();
-//            HttpResponseMessage response = await _client.GetAsync(Constants.ApiCarInformation + "/" + id);
-//            var addedItem = response.Content.ReadFromJsonAsync<CarInformationDto>().Result;
-//            if (addedItem != null)
-//            {
-//                TimeSpan rentalDuration = (DateTime)EndDay - (DateTime)StartDay;
-//                int numberOfDays = (int)rentalDuration.TotalDays;
-
-//                var rentingDetail = new RentingDetailDto
-//                {
-//                    CarId = (int)id,
-//                    StartDate = (DateTime)StartDay,
-//                    EndDate = (DateTime)EndDay,
-//                    Price = numberOfDays * addedItem.CarRentingPricePerDay,
-//                    CarName = addedItem.CarName
-//                };
-
-//                sessionData.Items.Add(rentingDetail);
-//            }
-
-//            HttpContext.Session.SetObjectAsJson("Cart", sessionData);
-
-//            return await OnGetAsync();
-//        }
-
-//        public async Task<IActionResult> OnPostRemove(int? id)
-//        {
-//            var userId = HttpContext.Session.GetInt32("User");
-//            if (userId == null || userId < 0)
-//            {
-//                return RedirectToPage("../Login");
-//            }
-
-//            var sessionData = HttpContext.Session.GetObjectFromJson<CartItem>("Cart") ??
-//                              new CartItem();
-//            sessionData.Items.RemoveAt((int)id);
-//            HttpContext.Session.SetObjectAsJson("Cart", sessionData);
-//            return await OnGetAsync();
-//        }
+            RentingTransaction = new CarRentalDto();
+            return Page();
+        }
 
 
-//        public async Task<IActionResult> OnPostSubmit()
-//        {
-//            var userId = HttpContext.Session.GetInt32("User");
-//            if (userId == null || userId < 0)
-//            {
-//                HttpContext.Session.SetObjectAsJson("Cart", null);
-//                return RedirectToPage("../Login");
-//            }
+        public async Task<IActionResult> OnPostSearch()
+        {
+            var userId = HttpContext.Session.GetInt32("User");
+            if (userId == null || userId < 0)
+            {
+                return RedirectToPage("../Login");
+            }
 
-//            var sessionData = HttpContext.Session.GetObjectFromJson<CartItem>("Cart") ??
-//                              new CartItem();
-//            RentingTransaction.CustomerId = (int)userId;
-//            if (sessionData.Items.Count > 0)
-//            {
-//                var rentingData = new NewRenting
-//                {
-//                    rentingDto = RentingTransaction,
-//                    rentingDetails = new List<RentingDetailDto>()
-//                };
+            if (StartDay == null || EndDay == null)
+            {
+                Error = "Pleas pick date to search car";
+                return await OnGetAsync();
+            }
 
-//                foreach (var o in sessionData.Items)
-//                {
-//                    rentingData.rentingDetails.Add(o);
-//                }
+            if (EndDay <= StartDay)
+            {
+                Error = "EndDay must > StartDay";
+                return await OnGetAsync();
+            }
 
-//                await _client.PostAsJsonAsync(_api, rentingData);
-//            }
+            Error = "";
+            var reponseCar = await _client.GetAsync(Constants.OdataString + Constants.CarInformation);
+            var availableCar = new ODataResponse<CarDto>();
+            if (reponseCar.IsSuccessStatusCode)
+            {
+                availableCar = await reponseCar.Content.ReadFromJsonAsync<ODataResponse<CarDto>>();
+            }
+  
+            var ignoreList = await _client.GetAsync(Constants.OdataString + Constants.Renting + "?$filter=(pickupDate ge " + StartDay + " and pickupDate le " + EndDay + " or (returnDate ge " + StartDay + " and returnDate le " + EndDay + ") or (pickupDate le " + StartDay + " and returnDate ge " + EndDay + ")");
+            if(ignoreList.IsSuccessStatusCode)
+            {
+                var ignoreId = await ignoreList.Content.ReadFromJsonAsync<ODataResponse<CarRentalDto>>();
+                if (ignoreId != null && ignoreId.Value.Count > 0)
+                {
+                    var tmp = ignoreId.Value.Select(o => o.CarID).ToList();
+                    var result = availableCar.Value.Where(o => !tmp.Contains(o.CarID)).ToList();
+                    availableCar.Value = result;
 
-//            HttpContext.Session.SetObjectAsJson("Cart", null);
-//            return RedirectToPage("./Index");
-//        }
-//    }
+                }
+            }
+          
+            // Store picker
+            HttpContext.Session.SetObjectAsJson("StartDay", StartDay);
+            HttpContext.Session.SetObjectAsJson("EndDay", EndDay);
 
-//    public class CartItem
-//    {
-//        public List<RentingDetailDto> Items { get; set; } = new();
-//    }
-//}
+            // Remove car in cart
+            RentingTemp = HttpContext.Session.GetObjectFromJson<NewRenting>("Cart")?.Values ??
+                       new List<CarRentalDto>();      
+         
+            var ignoreCarTemp = RentingTemp
+                .Where(o => (StartDay >= o.PickupDate && StartDay <= o.ReturnDate)
+                            || (o.PickupDate >= StartDay && o.ReturnDate <= EndDay)
+                            || (o.PickupDate <= EndDay && o.ReturnDate >= EndDay))
+                .Select(o => o.CarID)
+                .ToList();
+
+            // finish
+            if (availableCar != null)
+            {
+                var result = availableCar.Value.Where(o => !ignoreCarTemp.Contains(o.CarID)).ToList();
+                CarAvailable = result;
+            }
+            else
+            {
+                CarAvailable = new List<CarDto>();
+            }
+            
+
+            return Page();
+        }
+
+        public async Task<IActionResult> OnPostAdd(int? id)
+        {
+            var userId = HttpContext.Session.GetInt32("User");
+            if (userId == null || userId < 0)
+            {
+                return RedirectToPage("../Login");
+            }
+
+            var sessionData = HttpContext.Session.GetObjectFromJson<NewRenting>("Cart") ??
+                       new NewRenting();
+
+            HttpResponseMessage response = await _client.GetAsync(Constants.OdataString + Constants.CarInformation + "?$filter=carID eq " + id);
+            var addedItem = response.Content.ReadFromJsonAsync<ODataResponse<CarDto>>().Result;
+            if (addedItem.Value != null)
+            {
+                TimeSpan rentalDuration = (DateTime)EndDay - (DateTime)StartDay;
+                int numberOfDays = (int)rentalDuration.TotalDays;
+                var rentingDetail = new CarRentalDto
+                {
+                    CustomerID = (int)userId,
+                    CarID = (int)id,
+                    PickupDate =  (DateTime)StartDay,
+                    ReturnDate = (DateTime)EndDay,
+                    RentPrice = (numberOfDays * addedItem.Value[0].RentPrice),
+                    Status = "Pending",
+                };
+
+                sessionData.Values.Add(rentingDetail);
+            }
+
+            HttpContext.Session.SetObjectAsJson("Cart", sessionData);
+
+            return await OnGetAsync();
+        }
+
+        public async Task<IActionResult> OnPostRemove(int? id)
+        {
+            var userId = HttpContext.Session.GetInt32("User");
+            if (userId == null || userId < 0)
+            {
+                return RedirectToPage("../Login");
+
+            }
+            var sessionData = HttpContext.Session.GetObjectFromJson<NewRenting>("Cart") ??
+                                  new NewRenting();
+
+            sessionData.Values.RemoveAt((int)id);
+            HttpContext.Session.SetObjectAsJson("Cart", sessionData);
+            return await OnGetAsync();
+        }
+
+
+        public async Task<IActionResult> OnPostSubmit()
+        {
+            var userId = HttpContext.Session.GetInt32("User");
+            if (userId == null || userId < 0)
+            {
+                HttpContext.Session.SetObjectAsJson("Cart", null);
+                return RedirectToPage("../Login");
+            }
+
+            var sessionData = HttpContext.Session.GetObjectFromJson<NewRenting>("Cart") ??
+                                        new NewRenting();
+
+            if (sessionData.Values.Count > 0)
+            {
+
+                await _client.PostAsJsonAsync(_api, sessionData);
+            }
+
+            HttpContext.Session.SetObjectAsJson("Cart", null);
+            return RedirectToPage("./Index");
+        }
+    }
+
+}

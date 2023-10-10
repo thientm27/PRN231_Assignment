@@ -9,5 +9,9 @@ namespace CarRentingOData.DTOs.Request
     public class NewRenting
     {
        public List<CarRentalDto> Values { get; set; }
+
+        public NewRenting() { 
+            Values = new List<CarRentalDto>();
+        }
     }
 }
