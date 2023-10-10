@@ -7,6 +7,5 @@ public class Constants
     public static string CarInformation = "/Car";
     public static string Customer = "/Customer";
     public static string CarProducer = "/CarProducer";
-    public static string Renting = "/Renting";
     public static string CarRental = "/CarRental";
 }

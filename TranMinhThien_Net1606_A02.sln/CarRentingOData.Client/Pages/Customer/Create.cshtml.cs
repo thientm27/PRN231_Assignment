@@ -21,7 +21,7 @@ namespace CarRenting.Client.Pages.Customer
             _client = new HttpClient();
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             _client.DefaultRequestHeaders.Accept.Add(contentType);
-            _api = Constants.ApiString + Constants.Renting;
+            _api = Constants.ApiString + Constants.CarRental;
             CarAvailable = new List<CarDto>();
         }
 
@@ -81,10 +81,21 @@ namespace CarRenting.Client.Pages.Customer
             if (reponseCar.IsSuccessStatusCode)
             {
                 availableCar = await reponseCar.Content.ReadFromJsonAsync<ODataResponse<CarDto>>();
+            
             }
-  
-            var ignoreList = await _client.GetAsync(Constants.OdataString + Constants.Renting + "?$filter=(pickupDate ge " + StartDay + " and pickupDate le " + EndDay + " or (returnDate ge " + StartDay + " and returnDate le " + EndDay + ") or (pickupDate le " + StartDay + " and returnDate ge " + EndDay + ")");
-            if(ignoreList.IsSuccessStatusCode)
+            ////////
+            DateTime startDay = (DateTime)StartDay;
+            DateTime endDay = (DateTime)EndDay;
+            string formattedStartDay = startDay.ToString("yyyy-MM-dd");
+            string formattedEndDay = endDay.ToString("yyyy-MM-dd");
+
+            string filterString = $"?$filter=(PickupDate ge {formattedStartDay} and PickupDate le {formattedEndDay}) or (ReturnDate ge {formattedStartDay} and ReturnDate le {formattedEndDay}) or (PickupDate le {formattedStartDay} and ReturnDate ge {formattedEndDay})";
+
+            string requestUrl = Constants.OdataString + Constants.CarRental + filterString;
+
+            var ignoreList = await _client.GetAsync(requestUrl);
+            ////
+            if (ignoreList.IsSuccessStatusCode)
             {
                 var ignoreId = await ignoreList.Content.ReadFromJsonAsync<ODataResponse<CarRentalDto>>();
                 if (ignoreId != null && ignoreId.Value.Count > 0)

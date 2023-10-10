@@ -26,6 +26,9 @@
           
             <th>
                 @Html.DisplayNameFor(model => model.RentingTransaction[0].Car)
+            </th>  
+            <th>
+                @Html.DisplayNameFor(model => model.RentingTransaction[0].Status)
             </th>
             <th></th>
         </tr>
@@ -44,6 +47,10 @@
             </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Car.CarName)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
                 </td>
             <td>
                     <a asp-page="./Details"
