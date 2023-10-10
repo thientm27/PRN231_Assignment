@@ -1,5 +1,4 @@
-
-using CarRenting.DTOs;
+using CarRentingOData.DTOs;
 
 namespace CarRenting.Repositories;
 

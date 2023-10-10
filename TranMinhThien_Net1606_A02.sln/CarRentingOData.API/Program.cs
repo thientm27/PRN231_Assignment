@@ -1,4 +1,3 @@
-using CarRenting.DTOs;
 using CarRentingOData.BOs;
 using CarRentingOData.DTOs;
 using Microsoft.AspNetCore.OData;

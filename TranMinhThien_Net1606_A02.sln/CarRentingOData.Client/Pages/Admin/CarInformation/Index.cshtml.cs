@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using CarRenting.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using CarRentingOData.DTOs;
 
 namespace CarRenting.Client.Pages.Admin.CarInformation
 {

@@ -53,11 +53,11 @@
                     @Html.DisplayFor(modelItem => item.Status)
                 </td>
             <td>
-                    <a asp-page="./Details"
-                       asp-route-id1="@item.CustomerID"
-                       asp-route-id2="@item.CarID"
-                       asp-route-id3="@item.PickupDate">
-                    Details</a>
+                    <form asp-page="./Index" method="post" asp-page-handler="Cancel">
+                        <input type="hidden" asp-for="@Model.DeleteObjIndex" value="@Model.RentingTransaction.IndexOf(item)" />
+                        <input type="hidden" asp-for="@Model.RentingTransaction" value="@Model.RentingTransaction" />
+                    <button type="submit">Cancel order</button>
+                    </form>
             </td>
         </tr>
 }

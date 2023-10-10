@@ -1,8 +1,8 @@
 ﻿
 
 using AutoMapper;
-using CarRenting.DTOs;
 using CarRentingOData.BOs;
+using CarRentingOData.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 

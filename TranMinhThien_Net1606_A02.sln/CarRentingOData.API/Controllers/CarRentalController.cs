@@ -41,10 +41,11 @@ public class CarRentalController : ControllerBase
         return Ok();
     }
 
-    [HttpDelete("{id}")]
+    [HttpPut]
     public async Task<IActionResult> Delete(CarRentalDto carRentalDto)
     {
         await _repository.DeleteAsync(carRentalDto.CustomerID, carRentalDto.CarID, carRentalDto.PickupDate);
         return Ok();
     }
+
 }

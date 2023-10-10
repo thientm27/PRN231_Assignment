@@ -1,4 +1,3 @@
-using CarRenting.DTOs;
 using CarRenting.DTOs.Request;
 using CarRenting.Repositories;
 using CarRenting.Repositories.Repo;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
+using CarRentingOData.DTOs;
 
 namespace CarRenting.API.Controllers;
 

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CarRenting.DTOs;
 using CarRentingOData.BOs;
 using CarRentingOData.DTOs;
 using CarRentingOData.Repositories;
@@ -18,7 +17,10 @@ public class CarRentalRepo : ICarRentalRepo
         var config = new MapperConfiguration(cfg =>
         {
             cfg.CreateMap<CarRental, CarRentalDto>();
-            cfg.CreateMap<CarRentalDto, CarRental>();
+            cfg.CreateMap<CarRentalDto, CarRental>()
+         .ForMember(dest => dest.PickupDate, opt => opt.MapFrom(src => src.PickupDate))
+         .ForMember(dest => dest.ReturnDate, opt => opt.MapFrom(src => src.ReturnDate));
+
             cfg.CreateMap<Customer, CustomerDto>();
             cfg.CreateMap<Car, CarDto>();
         });
@@ -39,10 +41,36 @@ public class CarRentalRepo : ICarRentalRepo
     {
         try
         {
-            var entity = _mapper.Map<CarRental>(customerDto);
-            var rEntry = await _context.CarRentals.AddAsync(entity);
-            await _context.SaveChangesAsync();
-            return _mapper.Map<CarRentalDto>(rEntry.Entity);
+
+            var existed = await _context.CarRentals.FirstOrDefaultAsync(od
+            => od.CustomerID == customerDto.CustomerID
+            && od.CarID == customerDto.CarID
+            && od.PickupDate == customerDto.PickupDate);
+            if (existed != null)
+            {
+                existed.Status = "Pending";
+                await _context.SaveChangesAsync();
+
+                return _mapper.Map<CarRentalDto>(existed);
+            }
+            else
+            {
+                var entity = new CarRental
+                {
+                    CustomerID = customerDto.CustomerID,
+                    CarID = customerDto.CarID,
+                    PickupDate = customerDto.PickupDate,
+                    ReturnDate = customerDto.ReturnDate,
+                    RentPrice = customerDto.RentPrice,
+                    Status = customerDto.Status,
+                };
+
+                var rEntry = await _context.CarRentals.AddAsync(entity);
+                await _context.SaveChangesAsync();
+                return _mapper.Map<CarRentalDto>(rEntry.Entity);
+            }
+
+
         }
         catch (Exception e)
         {
@@ -79,6 +107,17 @@ public class CarRentalRepo : ICarRentalRepo
         return _mapper.Map<CarRentalDto>(entity);
     }
 
+    public async Task<bool> DeleteAsync(CarRentalDto deleteObj)
+    {
+        var carInformation =  await GetByAsync(deleteObj.CustomerID, deleteObj.CarID, deleteObj.PickupDate);
+        if (carInformation != null)
+        {
+            carInformation.Status = "0";
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        return false;
+    }
 
     public async Task<bool> DeleteAsync(int? customerID, int? carId, DateTime? pickDate)
     {

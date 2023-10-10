@@ -2,7 +2,7 @@
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using CarRenting.DTOs;
+using CarRentingOData.DTOs;
 
 namespace CarRenting.Client.Pages
 {

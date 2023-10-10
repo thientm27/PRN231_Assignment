@@ -1,4 +1,4 @@
-﻿@* @page
+﻿@page
 @model CarRenting.Client.Pages.Customer.DeleteModel
 
 @{
@@ -13,29 +13,39 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.RentingTransaction.RentingDate)
+            @Html.DisplayNameFor(model => model.RentingTransaction.PickupDate)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.RentingTransaction.RentingDate)
+            @Html.DisplayFor(model => model.RentingTransaction.PickupDate)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.RentingTransaction.TotalPrice)
+            @Html.DisplayNameFor(model => model.RentingTransaction.ReturnDate)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.RentingTransaction.TotalPrice)
+            @Html.DisplayFor(model => model.RentingTransaction.ReturnDate)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.RentingTransaction.RentingStatus)
+            @Html.DisplayNameFor(model => model.RentingTransaction.RentPrice)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.RentingTransaction.RentingStatus)
+            @Html.DisplayFor(model => model.RentingTransaction.RentPrice)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RentingTransaction.Status)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RentingTransaction.Status)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RentingTransaction.Car)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RentingTransaction.Car.CarName)
         </dd>
     </dl>
     
     <form method="post">
-        <input type="hidden" asp-for="RentingTransaction.RentingTransationId" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-page="./Index">Back to List</a>
     </form>
 </div>
- *@

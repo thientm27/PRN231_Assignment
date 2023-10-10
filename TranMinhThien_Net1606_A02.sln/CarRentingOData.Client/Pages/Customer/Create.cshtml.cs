@@ -2,7 +2,6 @@
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using CarRenting.DTOs;
 using CarRenting.DTOs.Request;
 using RazorPage.ViewModels;
 using CarRentingOData.DTOs;
@@ -76,24 +75,26 @@ namespace CarRenting.Client.Pages.Customer
             }
 
             Error = "";
-            var reponseCar = await _client.GetAsync(Constants.OdataString + Constants.CarInformation);
+            string filterString = "?$filter=status ne '0'&$expand=CarProducer";
+            string requestUrl = Constants.OdataString + Constants.CarInformation + filterString;
+            HttpResponseMessage responseCar = await _client.GetAsync(requestUrl);
             var availableCar = new ODataResponse<CarDto>();
-            if (reponseCar.IsSuccessStatusCode)
+            if (responseCar.IsSuccessStatusCode)
             {
-                availableCar = await reponseCar.Content.ReadFromJsonAsync<ODataResponse<CarDto>>();
-            
+                availableCar = await responseCar.Content.ReadFromJsonAsync<ODataResponse<CarDto>>();
+
             }
             ////////
             DateTime startDay = (DateTime)StartDay;
             DateTime endDay = (DateTime)EndDay;
             string formattedStartDay = startDay.ToString("yyyy-MM-dd");
             string formattedEndDay = endDay.ToString("yyyy-MM-dd");
+            string statusCondition = "status ne '0'";  // Corrected status condition
 
-            string filterString = $"?$filter=(PickupDate ge {formattedStartDay} and PickupDate le {formattedEndDay}) or (ReturnDate ge {formattedStartDay} and ReturnDate le {formattedEndDay}) or (PickupDate le {formattedStartDay} and ReturnDate ge {formattedEndDay})";
+            string filterString2 = $"?$filter={statusCondition} and ((PickupDate ge {formattedStartDay} and PickupDate le {formattedEndDay}) or (ReturnDate ge {formattedStartDay} and ReturnDate le {formattedEndDay}) or (PickupDate le {formattedStartDay} and ReturnDate ge {formattedEndDay}))";
+            string requestUrl2 = Constants.OdataString + Constants.CarRental + filterString2;
 
-            string requestUrl = Constants.OdataString + Constants.CarRental + filterString;
-
-            var ignoreList = await _client.GetAsync(requestUrl);
+            var ignoreList = await _client.GetAsync(requestUrl2);
             ////
             if (ignoreList.IsSuccessStatusCode)
             {
@@ -106,15 +107,15 @@ namespace CarRenting.Client.Pages.Customer
 
                 }
             }
-          
+
             // Store picker
             HttpContext.Session.SetObjectAsJson("StartDay", StartDay);
             HttpContext.Session.SetObjectAsJson("EndDay", EndDay);
 
             // Remove car in cart
             RentingTemp = HttpContext.Session.GetObjectFromJson<NewRenting>("Cart")?.Values ??
-                       new List<CarRentalDto>();      
-         
+                       new List<CarRentalDto>();
+
             var ignoreCarTemp = RentingTemp
                 .Where(o => (StartDay >= o.PickupDate && StartDay <= o.ReturnDate)
                             || (o.PickupDate >= StartDay && o.ReturnDate <= EndDay)
@@ -132,7 +133,7 @@ namespace CarRenting.Client.Pages.Customer
             {
                 CarAvailable = new List<CarDto>();
             }
-            
+
 
             return Page();
         }
@@ -148,7 +149,7 @@ namespace CarRenting.Client.Pages.Customer
             var sessionData = HttpContext.Session.GetObjectFromJson<NewRenting>("Cart") ??
                        new NewRenting();
 
-            HttpResponseMessage response = await _client.GetAsync(Constants.OdataString + Constants.CarInformation + "?$filter=carID eq " + id);
+            HttpResponseMessage response = await _client.GetAsync(Constants.OdataString + Constants.CarInformation + "?$filter=carID eq " + id + "&$expand=CarProducer");
             var addedItem = response.Content.ReadFromJsonAsync<ODataResponse<CarDto>>().Result;
             if (addedItem.Value != null)
             {
@@ -158,10 +159,11 @@ namespace CarRenting.Client.Pages.Customer
                 {
                     CustomerID = (int)userId,
                     CarID = (int)id,
-                    PickupDate =  (DateTime)StartDay,
+                    PickupDate = (DateTime)StartDay,
                     ReturnDate = (DateTime)EndDay,
                     RentPrice = (numberOfDays * addedItem.Value[0].RentPrice),
                     Status = "Pending",
+                    Car = addedItem.Value[0]
                 };
 
                 sessionData.Values.Add(rentingDetail);

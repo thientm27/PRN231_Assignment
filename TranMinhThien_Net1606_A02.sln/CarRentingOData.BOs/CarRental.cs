@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarRentingOData.BOs
 {
@@ -33,8 +28,8 @@ namespace CarRentingOData.BOs
         public string Status { get; set; }
 
         // Navigation properties to represent the many-to-one relationships
-        public Customer Customer { get; set; }
-        public Car Car { get; set; }
+        public Customer? Customer { get; set; }
+        public Car? Car { get; set; }
     }
 }
 public class GreaterThanAttribute : ValidationAttribute

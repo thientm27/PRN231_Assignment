@@ -1,5 +1,4 @@
 using AutoMapper;
-using CarRenting.DTOs;
 using CarRentingOData.BOs;
 using CarRentingOData.DTOs;
 using CarRentingOData.Repositories;

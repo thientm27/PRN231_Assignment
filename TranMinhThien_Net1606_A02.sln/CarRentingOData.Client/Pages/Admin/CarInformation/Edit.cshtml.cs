@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using CarRenting.DTOs;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using CarRentingOData.DTOs;
 using CarRentingOData.DTOs.Response;

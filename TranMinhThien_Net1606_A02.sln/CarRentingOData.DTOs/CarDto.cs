@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using CarRentingOData.DTOs;
 
-namespace CarRenting.DTOs;
+namespace CarRentingOData.DTOs;
 
 public class CarDto
 {
