@@ -65,5 +65,6 @@ static IEdmModel GetEdmModel()
     builder.EntitySet<CustomerDto>("Customer");
     builder.EntitySet<CarDto>("Car");
     builder.EntitySet<CarProducerDto>("CarProducer");
+    builder.EntitySet<CarRentalDto>("CarRental");
     return builder.GetEdmModel();
 }

@@ -23,7 +23,7 @@ namespace CarRentingOData.BOs
         public DateTime PickupDate { get; set; }
 
         [Required]
-        [GreaterThan(nameof(PickupDate))]
+        [GreaterThan(nameof(PickupDate))] 
         public DateTime ReturnDate { get; set; }
 
         [Required]

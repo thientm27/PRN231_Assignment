@@ -2,6 +2,7 @@ using CarRenting.DTOs;
 using CarRenting.Repositories.Repo;
 using CarRentingOData.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace CarRenting.API.Controllers;
 [ApiController]
@@ -11,6 +12,7 @@ public class CarController : ControllerBase
     private readonly ICarRepo _repository = new CarRepo();
 
     [HttpGet]
+    [EnableQuery]
     public async Task<IActionResult> Get()
     {
         var result =  await _repository.GetAsync();

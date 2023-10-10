@@ -49,7 +49,6 @@ public class CarRepo : ICarRepo
         await _context.SaveChangesAsync();
         return _mapper.Map<CarDto>(rEntry.Entity);
     }
-
     public async Task<CarDto?> GetByIdAsync(int id)
     {
         var entity = await _context.Cars

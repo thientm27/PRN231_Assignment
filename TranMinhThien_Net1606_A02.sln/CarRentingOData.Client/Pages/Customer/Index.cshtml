@@ -1,0 +1,58 @@
+﻿@page
+@model CarRenting.Client.Pages.Customer.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>YOUR RENTING ORDER</h1>
+
+<p>
+    <a asp-page="Create">Create renting</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RentingTransaction[0].PickupDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RentingTransaction[0].ReturnDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RentingTransaction[0].RentPrice)
+            </th>
+          
+            <th>
+                @Html.DisplayNameFor(model => model.RentingTransaction[0].Car)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.RentingTransaction) {
+        <tr>
+            <td>
+                    @Html.DisplayFor(modelItem => item.PickupDate)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.ReturnDate)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.RentPrice)
+            </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Car.CarName)
+                </td>
+            <td>
+                    <a asp-page="./Details"
+                       asp-route-id1="@item.CustomerID"
+                       asp-route-id2="@item.CarID"
+                       asp-route-id3="@item.PickupDate">
+                    Details</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
