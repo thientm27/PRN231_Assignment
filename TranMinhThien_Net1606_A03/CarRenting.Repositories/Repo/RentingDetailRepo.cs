@@ -9,57 +9,46 @@ namespace CarRenting.Repositories.Repo;
 public class RentingDetailRepo : IRentingDetailRepo
 {
     private readonly FUCarRentingManagementContext _context;
-    private readonly IMapper _mapper;
 
     public RentingDetailRepo()
     {
         _context = new FUCarRentingManagementContext();
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.CreateMap<RentingDto, RentingTransaction>();
-            cfg.CreateMap<RentingTransaction, RentingDto>();
-            cfg.CreateMap<RentingDetailDto, RentingDetail>();
-            cfg.CreateMap<RentingDetail, RentingDetailDto>();
-            cfg.CreateMap<CarInformationDto, CarInformation>();
-            cfg.CreateMap<CarInformation, CarInformationDto>();
-        });
-
-        _mapper = new Mapper(config);
+      
     }
 
-    public async Task<List<RentingDetailDto>> GetAsync()
+    public async Task<List<RentingDetail>> GetAsync()
     {
         var entities = await _context.RentingDetails
             .Include(o => o.Car)
             .ToListAsync();
-        return entities.Select(dto => _mapper.Map<RentingDetailDto>(dto)).ToList();
+        return entities;
+     //   return entities.Select(dto => _mapper.Map<RentingDetailDto>(dto)).ToList();
     }
 
-    public async Task<RentingDetailDto?> AddAsync(RentingDetailDto dataDto)
+    public async Task<RentingDetail?> AddAsync(RentingDetail data)
     {
-        var entity = _mapper.Map<RentingDetail>(dataDto);
         // var maxId = await _context.CarInformations.MaxAsync(o => o.CarId);
         // entity.CarId = maxId + 1;
-        var rEntry = await _context.RentingDetails.AddAsync(entity);
+        var rEntry = await _context.RentingDetails.AddAsync(data);
         await _context.SaveChangesAsync();
-        return _mapper.Map<RentingDetailDto>(rEntry.Entity);
+        return data;
     }
 
 
-    public async Task<RentingDetailDto?> UpdateAsync(RentingDetailDto dataDto)
+    public async Task<RentingDetail?> UpdateAsync(RentingDetail data)
     {
-        var entity = _context.RentingDetails.FirstOrDefault(od => od.CarId == dataDto.CarId);
+        var entity = _context.RentingDetails.FirstOrDefault(od => od.CarId == data.CarId);
         if (entity != null)
         {
-            _context.Entry(entity).CurrentValues.SetValues(_mapper.Map<RentingDetail>(dataDto));
+            _context.Entry(entity).CurrentValues.SetValues(data);
             await _context.SaveChangesAsync();
-            return _mapper.Map<RentingDetailDto>(entity);
+            return data;
         }
 
         return null;
     }
 
-    public async Task<List<RentingDetailDto>?> GetsByIdAsync(int id)
+    public async Task<List<RentingDetail>?> GetsByIdAsync(int id)
     {
         var entities = await _context.RentingDetails
             .Include(o => o.Car)
@@ -69,12 +58,13 @@ public class RentingDetailRepo : IRentingDetailRepo
             return null;
         }
 
-        return entities.Select(dto => _mapper.Map<RentingDetailDto>(dto)).ToList();
+        return entities;
+       // return entities.Select(dto => _mapper.Map<RentingDetailDto>(dto)).ToList();
     }
 
 
     [Obsolete("This method cannot use")]
-    public async Task<RentingDetailDto?> GetByIdAsync(int id)
+    public async Task<RentingDetail?> GetByIdAsync(int id)
     {
         var entity = await _context.RentingDetails
             .Include(o => o.Car)
@@ -84,7 +74,7 @@ public class RentingDetailRepo : IRentingDetailRepo
             return null;
         }
 
-        return _mapper.Map<RentingDetailDto>(entity);
+        return entity;
     }
 
     [Obsolete("This method cannot use")]

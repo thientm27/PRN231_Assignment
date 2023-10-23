@@ -1,8 +1,8 @@
-using CarRenting.DTOs;
+using CarRenting.BusinessObjects.Models;
 
 namespace CarRenting.Repositories;
 
-public interface ICustomerRepo : IBaseRepo<CustomerDto>
+public interface ICustomerRepo : IBaseRepo<Customer>
 {
-    public Task<CustomerDto?> LoginAsync(string email, string password);
+    public Task<Customer?> LoginAsync(string email, string password);
 }

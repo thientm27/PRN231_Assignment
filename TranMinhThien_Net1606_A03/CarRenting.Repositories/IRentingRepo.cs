@@ -1,10 +1,9 @@
-﻿using CarRenting.DTOs;
-using CarRenting.DTOs.Request;
+﻿
 
 namespace CarRenting.Repositories;
 
-public interface IRentingRepo : IBaseRepo<RentingDto>
+public interface IRentingRepo : IBaseRepo<Renting>
 {
-    public Task<RentingDto?> AddWithDetailsAsync(NewRenting data);
-    public Task<List<RentingDto>> GetByIdCustomerAsync(int id);
+    public Task<Renting?> AddWithDetailsAsync(Renting data);
+    public Task<List<Renting>> GetByIdCustomerAsync(int id);
 }

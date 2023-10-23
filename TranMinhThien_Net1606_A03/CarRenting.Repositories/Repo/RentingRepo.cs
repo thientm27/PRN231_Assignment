@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using CarRenting.BusinessObjects.Models;
-using CarRenting.DTOs;
-using CarRenting.DTOs.Request;
+﻿using CarRenting.BusinessObjects.Models;
+
 using CarRenting.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,48 +8,32 @@ namespace CarRenting.Repositories.Repo;
 public class RentingRepo : IRentingRepo
 {
     private readonly FUCarRentingManagementContext _context;
-    private readonly IMapper _mapper;
 
     public RentingRepo()
     {
         _context = new FUCarRentingManagementContext();
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.CreateMap<RentingDto, RentingTransaction>();
-            cfg.CreateMap<RentingTransaction, RentingDto>();
-            cfg.CreateMap<RentingDetailDto, RentingDetail>();
-            cfg.CreateMap<RentingDetail, RentingDetailDto>();
-        });
-
-        _mapper = new Mapper(config);
+    
     }
 
-    public async Task<List<RentingDto>> GetAsync()
+    public async Task<List<RentingTransaction>> GetAsync()
     {
         var entities = await _context.RentingTransactions
             .Include(o => o.Customer)
             .ToListAsync();
-        return entities.Select(dto => _mapper.Map<RentingDto>(dto)).ToList();
+        return entities;
+      //  return entities.Select(dto => _mapper.Map<RentingDto>(dto)).ToList();
     }
 
-    public async Task<RentingDto?> AddAsync(RentingDto customerDto)
+    public async Task<RentingTransaction?> AddAsync(RentingTransaction newData)
     {
-        try
-        {
-            var entity = _mapper.Map<RentingTransaction>(customerDto);
-            var maxId = await _context.RentingTransactions.MaxAsync(o => o.RentingTransationId);
-            entity.RentingTransationId = maxId + 1;
-            var rEntry = await _context.RentingTransactions.AddAsync(entity);
-            await _context.SaveChangesAsync();
-            return _mapper.Map<RentingDto>(rEntry.Entity);
-        }
-        catch (Exception e)
-        {
-            return null;
-        }
+        var maxId = await _context.RentingTransactions.MaxAsync(o => o.RentingTransationId);
+        newData.RentingTransationId = maxId + 1;
+        var rEntry = await _context.RentingTransactions.AddAsync(newData);
+        await _context.SaveChangesAsync();
+        return rEntry.Entity;
     }
 
-    public async Task<RentingDto?> GetByIdAsync(int id)
+    public async Task<RentingTransaction?> GetByIdAsync(int id)
     {
         var entity = await _context.RentingTransactions
             .Include(o => o.Customer)
@@ -61,18 +43,18 @@ public class RentingRepo : IRentingRepo
             return null;
         }
 
-        return _mapper.Map<RentingDto>(entity);
+        return entity;
     }
 
-    public async Task<RentingDto?> UpdateAsync(RentingDto dataDto)
+    public async Task<RentingTransaction?> UpdateAsync(RentingTransaction dataDto)
     {
         var entity =
             _context.RentingTransactions.FirstOrDefault(od => od.RentingTransationId == dataDto.RentingTransationId);
         if (entity != null)
         {
-            _context.Entry(entity).CurrentValues.SetValues(_mapper.Map<RentingDto>(dataDto));
+            _context.Entry(entity).CurrentValues.SetValues(dataDto);
             await _context.SaveChangesAsync();
-            return _mapper.Map<RentingDto>(entity);
+            return dataDto;
         }
 
         return null;
@@ -90,26 +72,26 @@ public class RentingRepo : IRentingRepo
         return false;
     }
 
-    public async Task<RentingDto?> AddWithDetailsAsync(NewRenting data)
+    public async Task<RentingTransaction?> AddWithDetailsAsync(RentingTransaction data)
     {
-        RentingDetailRepo rentingDetailRepo = new RentingDetailRepo();
-        data.rentingDto.RentingStatus = 1;
-        var renting = await AddAsync(data.rentingDto);
-        if (renting == null)
-        {
-            return null;
-        }
+        //RentingDetailRepo rentingDetailRepo = new RentingDetailRepo();
+        //data.rentingDto.RentingStatus = 1;
+        //var renting = await AddAsync(data.rentingDto);
+        //if (renting == null)
+        //{
+        //    return null;
+        //}
 
-        foreach (var detail in data.rentingDetails)
-        {
-            detail.RentingTransactionId = renting.RentingTransationId;
-            await rentingDetailRepo.AddAsync(detail);
-        }
+        //foreach (var detail in data.rentingDetails)
+        //{
+        //    detail.RentingTransactionId = renting.RentingTransationId;
+        //    await rentingDetailRepo.AddAsync(detail);
+        //}
 
-        return renting;
+        return null;
     }
 
-    public async Task<List<RentingDto>?> GetByIdCustomerAsync(int id)
+    public async Task<List<RentingTransaction>?> GetByIdCustomerAsync(int id)
     {
         var entities = await _context.RentingTransactions
             .Include(o => o.Customer)
@@ -119,6 +101,7 @@ public class RentingRepo : IRentingRepo
             return null;
         }
 
-        return entities.Select(dto => _mapper.Map<RentingDto>(dto)).ToList();
+        return entities;
+       // return entities.Select(dto => _mapper.Map<RentingDto>(dto)).ToList();
     }
 }

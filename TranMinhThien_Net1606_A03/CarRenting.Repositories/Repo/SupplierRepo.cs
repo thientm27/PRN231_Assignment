@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using CarRenting.BusinessObjects.Models;
-using CarRenting.DTOs;
+﻿using CarRenting.BusinessObjects.Models;
 using CarRenting.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,37 +7,30 @@ namespace CarRenting.Repositories.Repo;
 public class SupplierRepo : ISupplierRepo
 {
     private readonly FUCarRentingManagementContext _context;
-    private readonly IMapper _mapper;
 
     public SupplierRepo()
     {
         _context = new FUCarRentingManagementContext();
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.CreateMap<SupplierDto, Supplier>();
-            cfg.CreateMap<Supplier, SupplierDto>();
-        });
-
-        _mapper = new Mapper(config);
     }
 
-    public async Task<List<SupplierDto>> GetAsync()
+    public async Task<List<Supplier>> GetAsync()
     {
         var entities = await _context.Suppliers.ToListAsync();
-        return entities.Select(dto => _mapper.Map<SupplierDto>(dto)).ToList();
+        return entities;
+      //  return entities.Select(dto => _mapper.Map<SupplierDto>(dto)).ToList();
     }
 
-    public Task<SupplierDto?> AddAsync(SupplierDto customerDto)
+    public Task<Supplier?> AddAsync(Supplier customerDto)
     {
         throw new NotImplementedException();
     }
 
-    public Task<SupplierDto?> GetByIdAsync(int id)
+    public Task<Supplier?> GetByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<SupplierDto?> UpdateAsync(SupplierDto customerDto)
+    public Task<Supplier?> UpdateAsync(Supplier customerDto)
     {
         throw new NotImplementedException();
     }
