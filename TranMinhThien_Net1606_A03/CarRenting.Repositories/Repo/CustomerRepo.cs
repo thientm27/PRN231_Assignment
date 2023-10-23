@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using CarRenting.BusinessObjects.Models;
-using CarRenting.DTOs;
+﻿using CarRenting.BusinessObjects.Models;
 using CarRenting.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -10,26 +8,19 @@ namespace CarRenting.Repositories.Repo
     public class CustomerRepo : ICustomerRepo
     {
         private readonly FUCarRentingManagementContext _context;
-        private readonly IMapper _mapper;
 
         public CustomerRepo()
         {
             _context = new FUCarRentingManagementContext();
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<CustomerDto, Customer>();
-                cfg.CreateMap<Customer, CustomerDto>();
-            });
-
-            _mapper = new Mapper(config);
+          
         }
 
-        public async Task<CustomerDto?> LoginAsync(string email, string password)
+        public async Task<Customer?> LoginAsync(string email, string password)
         {
             var adminAccount = GetAdmin();
             if (email.ToLower() == adminAccount.Email.ToLower() && password == adminAccount.Password)
             {
-                return new CustomerDto()
+                return new Customer()
                 {
                     CustomerId = -1,
                     Email = email,
@@ -47,7 +38,7 @@ namespace CarRenting.Repositories.Repo
                 return null;
             }
 
-            return _mapper.Map<CustomerDto>(loginCustomer);
+            return loginCustomer;
         }
 
         private AdminAccountInfo GetAdmin()
@@ -68,7 +59,7 @@ namespace CarRenting.Repositories.Repo
         }
 
 
-        public async Task<CustomerDto?> AddAsync(CustomerDto customerDto)
+        public async Task<Customer?> AddAsync(Customer customerDto)
         {
             var existedEmail =
                 _context.Customers.FirstOrDefault(od =>
@@ -78,14 +69,12 @@ namespace CarRenting.Repositories.Repo
             {
                 return null;
             }
-
-            var customer = _mapper.Map<Customer>(customerDto);
-            var rEntry = await _context.Customers.AddAsync(customer);
+            var rEntry = await _context.Customers.AddAsync(customerDto);
             await _context.SaveChangesAsync();
-            return _mapper.Map<CustomerDto>(rEntry.Entity);
+            return rEntry.Entity;
         }
 
-        public async Task<CustomerDto?> GetByIdAsync(int id)
+        public async Task<Customer?> GetByIdAsync(int id)
         {
             var customer = await _context.Customers.FirstOrDefaultAsync(od => od.CustomerId == id);
             if (customer == null)
@@ -93,10 +82,10 @@ namespace CarRenting.Repositories.Repo
                 return null;
             }
 
-            return _mapper.Map<CustomerDto>(customer);
+            return customer;
         }
 
-        public async Task<CustomerDto?> UpdateAsync(CustomerDto customerDto)
+        public async Task<Customer?> UpdateAsync(Customer customerDto)
         {
             var existedEmail =
                 _context.Customers.FirstOrDefault(od =>
@@ -111,9 +100,9 @@ namespace CarRenting.Repositories.Repo
             var customer = _context.Customers.FirstOrDefault(od => od.CustomerId == customerDto.CustomerId);
             if (customer != null)
             {
-                _context.Entry(customer).CurrentValues.SetValues(_mapper.Map<Customer>(customerDto));
+                _context.Entry(customer).CurrentValues.SetValues(customerDto);
                 await _context.SaveChangesAsync();
-                return _mapper.Map<CustomerDto>(customer);
+                return customerDto;
             }
 
             return null;
@@ -125,10 +114,10 @@ namespace CarRenting.Repositories.Repo
             return customer == null;
         }
 
-        public async Task<List<CustomerDto>> GetAsync()
+        public async Task<List<Customer>> GetAsync()
         {
             var customers = await _context.Customers.ToListAsync();
-            return customers.Select(dto => _mapper.Map<CustomerDto>(dto)).ToList();
+            return customers;
         }
 
         public async Task<bool> DeleteAsync(int customerId)

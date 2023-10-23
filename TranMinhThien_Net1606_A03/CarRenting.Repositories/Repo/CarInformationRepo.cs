@@ -1,59 +1,47 @@
-using AutoMapper;
 using CarRenting.BusinessObjects.Models;
-using CarRenting.DTOs;
 using CarRenting.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
-using Supplier = CarRenting.BusinessObjects.Models.Supplier;
 
 namespace CarRenting.Repositories.Repo;
 
 public class CarInformationRepo : ICarInformationRepo
 {
     private readonly FUCarRentingManagementContext _context;
-    private readonly IMapper _mapper;
 
     public CarInformationRepo()
     {
         _context = new FUCarRentingManagementContext();
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.CreateMap<CarInformationDto, CarInformation>();
-            cfg.CreateMap<CarInformation, CarInformationDto>();
-            cfg.CreateMap<Supplier, SupplierDto>();
-            cfg.CreateMap<Manufacturer, ManufacturerDto>();
-        });
-
-        _mapper = new Mapper(config);
+ 
     }
 
-    public async Task<List<CarInformationDto>> GetAsync()
+    public async Task<List<CarInformation>> GetAsync()
     {
         var entities = await _context.CarInformations
             .Include(o => o.Manufacturer)
             .Include(o => o.Supplier)
             .ToListAsync();
-        return entities.Select(dto => _mapper.Map<CarInformationDto>(dto)).ToList();
+        return entities;
     }
-    public async Task<List<CarInformationDto>> GetCarAvailable()
+    public async Task<List<CarInformation>> GetCarAvailable()
     {
         var entities = await _context.CarInformations
             .Include(o => o.Manufacturer)
             .Include(o => o.Supplier)
             .Where(o => o.CarStatus != 0)
             .ToListAsync();
-        return entities.Select(dto => _mapper.Map<CarInformationDto>(dto)).ToList();
+        return entities;
     }
-    public async Task<CarInformationDto?> AddAsync(CarInformationDto dataDto)
+    public async Task<CarInformation?> AddAsync(CarInformation data)
     {
-        var entity = _mapper.Map<CarInformation>(dataDto);
+     
         // var maxId = await _context.CarInformations.MaxAsync(o => o.CarId);
         // entity.CarId = maxId + 1;
-        var rEntry = await _context.CarInformations.AddAsync(entity);
+        var rEntry = await _context.CarInformations.AddAsync(data);
         await _context.SaveChangesAsync();
-        return _mapper.Map<CarInformationDto>(rEntry.Entity);
+        return rEntry.Entity;
     }
 
-    public async Task<CarInformationDto?> GetByIdAsync(int id)
+    public async Task<CarInformation?> GetByIdAsync(int id)
     {
         var entity = await _context.CarInformations
             .Include(o => o.Manufacturer)
@@ -64,17 +52,17 @@ public class CarInformationRepo : ICarInformationRepo
             return null;
         }
 
-        return _mapper.Map<CarInformationDto>(entity);
+        return entity;
     }
 
-    public async Task<CarInformationDto?> UpdateAsync(CarInformationDto dataDto)
+    public async Task<CarInformation?> UpdateAsync(CarInformation dataDto)
     {
         var entity = _context.CarInformations.FirstOrDefault(od => od.CarId == dataDto.CarId);
         if (entity != null)
         {
-            _context.Entry(entity).CurrentValues.SetValues(_mapper.Map<CarInformation>(dataDto));
+            _context.Entry(entity).CurrentValues.SetValues(dataDto);
             await _context.SaveChangesAsync();
-            return _mapper.Map<CarInformationDto>(entity);
+            return dataDto;
         }
 
         return null;
