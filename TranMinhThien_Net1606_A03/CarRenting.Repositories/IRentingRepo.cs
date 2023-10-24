@@ -1,9 +1,11 @@
 ﻿
 
+using CarRenting.BusinessObjects.Models;
+
 namespace CarRenting.Repositories;
 
-public interface IRentingRepo : IBaseRepo<Renting>
+public interface IRentingRepo : IBaseRepo<RentingTransaction>
 {
-    public Task<Renting?> AddWithDetailsAsync(Renting data);
-    public Task<List<Renting>> GetByIdCustomerAsync(int id);
+    public Task<RentingTransaction?> AddWithDetailsAsync(RentingTransaction data);
+    public Task<List<RentingTransaction>> GetByIdCustomerAsync(int id);
 }

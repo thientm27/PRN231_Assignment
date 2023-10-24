@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using CarRenting.BusinessObjects.Models;
-using CarRenting.DTOs;
+﻿using CarRenting.BusinessObjects.Models;
 using CarRenting.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 

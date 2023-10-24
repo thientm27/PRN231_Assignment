@@ -1,3 +1,5 @@
+using CarRenting.BusinessObjects.Models;
+
 namespace CarRenting.Repositories;
 
 public interface IBaseRepo<TEntity> where TEntity : class
@@ -7,4 +9,5 @@ public interface IBaseRepo<TEntity> where TEntity : class
     public Task<TEntity?> GetByIdAsync(int id);
     public Task<TEntity?> UpdateAsync(TEntity customerDto);
     public Task<bool> DeleteAsync(int customerId);
+    Task<List<RentingTransaction>?> GetByIdCustomerAsync(int id);
 }
