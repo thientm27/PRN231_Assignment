@@ -99,6 +99,11 @@ namespace CarRenting.Repositories.Repo
             return await  _context.Customers.FirstOrDefaultAsync(od =>
              od.Email.ToLower().Equals(email.ToLower()));
         }
+
+        public Task<List<RentingTransaction>?> GetByIdCustomerAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class AdminAccountInfo

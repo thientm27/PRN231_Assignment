@@ -1,7 +1,9 @@
 
+using CarRenting.API.Models;
 using CarRenting.BusinessObjects.Models;
 using CarRenting.Repositories;
 using CarRenting.Repositories.Repo;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -15,6 +17,7 @@ public class CustomerController : ControllerBase
     
 
     [HttpGet]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> Get()
     {
         var reslut = await _repository.GetAsync();
@@ -22,6 +25,8 @@ public class CustomerController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Roles = UserRoles.Customer)]
     public async Task<IActionResult> GetById(int id)
     {
         var reslut = await _repository.GetByIdAsync(id);
@@ -29,6 +34,7 @@ public class CustomerController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> Create(Customer customerDto)
     {
         var createdCustomer = await _repository.AddAsync(customerDto);
@@ -36,6 +42,8 @@ public class CustomerController : ControllerBase
     }
     
     [HttpPut("{id}")]
+    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Roles = UserRoles.Customer)]
     public async Task<IActionResult> Update(int id, Customer customerDto)
     {
         var result = await _repository.UpdateAsync(customerDto);
@@ -43,6 +51,8 @@ public class CustomerController : ControllerBase
     }
     
     [HttpDelete("{id}")]
+    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Roles = UserRoles.Customer)]
     public async Task<IActionResult> Delete(int id)
     {
         await _repository.DeleteAsync(id);

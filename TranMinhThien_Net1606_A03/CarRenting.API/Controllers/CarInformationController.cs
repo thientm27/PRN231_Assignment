@@ -1,3 +1,4 @@
+using CarRenting.API.Models;
 using CarRenting.BusinessObjects.Models;
 using CarRenting.Repositories;
 using CarRenting.Repositories.Repo;
@@ -12,21 +13,23 @@ public class CarInformationController : ControllerBase
     private readonly ICarInformationRepo _repository = new CarInformationRepo();
 
     [HttpGet]
+    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Roles = UserRoles.Customer)]
     public async Task<IActionResult> Get()
     {
-        var reslut =        await _repository.GetAsync();
+        var reslut = await _repository.GetAsync();
         return Ok(reslut);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-         var reslut =       await _repository.GetByIdAsync(id);
+         var reslut = await _repository.GetByIdAsync(id);
         return Ok(reslut);
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> Create(CarInformation newCar)
     {
         var reslut = await _repository.AddAsync(newCar);
@@ -34,6 +37,7 @@ public class CarInformationController : ControllerBase
     }
     
     [HttpPut("{id}")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> Update(CarInformation newCar)
     {
         var reslut = await _repository.UpdateAsync(newCar);
@@ -41,6 +45,7 @@ public class CarInformationController : ControllerBase
     }
     
     [HttpDelete("{id}")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> Delete(int id)
     {
         await _repository.DeleteAsync(id);
