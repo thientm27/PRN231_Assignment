@@ -71,8 +71,8 @@
                             appendElement.append($("<td>").html(value["manufacturer"]["manufacturerName"])); // Corrected property access
                             appendElement.append($("<td>").html(value["supplier"]["supplierName"])); // Corrected property access
                             appendElement.append($("<td>").html(
-                                "<a class='btn btn-warning' href='/Admin2/CarInformation/Edit?id=" + value["CarId"] + "'>Edit</a>" +
-                                "<a class='btn btn-danger ms-2' href='/Admin2/CarInformation/Delete?id=" + value["CarId"] + "'>Delete</a>"
+                                "<a class='btn btn-warning' href='/Admin2/CarInformation/Edit?id=" + value["carId"] + "'>Edit</a>" +
+                                "<a class='btn btn-danger ms-2' href='/Admin2/CarInformation/Delete?id=" + value["carId"] + "'>Delete</a>"
                             ));
                         })
                     },
