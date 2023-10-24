@@ -75,42 +75,6 @@
                     }
                 })
             }
-
-            // $("#form-search").submit(function (e) {
-            //     e.preventDefault();
-            //     const keyword = $("input[name='keyword']").val();
-            //     $.ajax({
-            //         url: "http://localhost:5167/api/FlowerBouquet/Search/" + keyword,
-            //         type: "GET",
-            //         contentType: "application/json",
-            //         success: function (result, status, xhr) {
-            //             $("table tbody").html("");
-            //             $.each(result, function (index, value) {
-            //                 $("tbody").append($("<tr>"));
-            //                 const appendElement = $("tbody tr").last();
-            //                 appendElement.append($("<td>").html(value["flowerBouquetName"]));
-            //                 appendElement.append($("<td>").html(value["description"]));
-            //                 appendElement.append($("<td>").html(value["unitPrice"]));
-            //                 appendElement.append($("<td>").html(value["unitsInStock"]));
-            //                 appendElement.append($("<td>").html(value["flowerBouquetStatus"]));
-            //                 appendElement.append($("<td>").html(value["category"]["categoryName"]));
-            //                 appendElement.append($("<td>").html(value["supplier"]["supplierName"]));
-            //                 appendElement.append($("<td>").html(
-            //                     "<a class='btn btn-warning' href='FlowerBouquet/Edit?id=" + value["flowerBouquetID"] + "'>Edit</a>" +
-            //                     "<a class='btn btn-danger ms-2' href='FlowerBouquet/Delete?id=" + value["flowerBouquetID"] + "'>Delete</a>"
-            //                 ));
-            //             })
-            //         },
-            //         error: function (xhr, status, error) {
-            //             console.log(xhr);
-            //         }
-            //     })
-            // })
-
-            // $("#clear-search").click(function () {
-            //     $("input[name='keyword']").val("");
-            //     ShowAllFlowerBouquets();
-            // })
         })
     </script>
 }

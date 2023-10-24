@@ -1,0 +1,7 @@
+﻿@page
+@model CarRenting.Client.Pages.Admin2.CarInformation.IndexModel
+@{
+    ViewData["Title"] = "List Car";
+    var jwt = HttpContext.Session.GetString("JWToken");
+    var api = Constants.Api + "CarInformation";
+}

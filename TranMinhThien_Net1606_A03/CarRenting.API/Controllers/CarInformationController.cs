@@ -21,6 +21,7 @@ public class CarInformationController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> GetById(int id)
     {
          var reslut = await _repository.GetByIdAsync(id);
@@ -32,6 +33,10 @@ public class CarInformationController : ControllerBase
     public async Task<IActionResult> Create(CarInformation newCar)
     {
         var reslut = await _repository.AddAsync(newCar);
+        if (reslut == null)
+        {
+            return BadRequest();
+        }
         return Ok(reslut);
     }
     
@@ -40,6 +45,10 @@ public class CarInformationController : ControllerBase
     public async Task<IActionResult> Update(CarInformation newCar)
     {
         var reslut = await _repository.UpdateAsync(newCar);
+        if (reslut == null)
+        {
+            return BadRequest();
+        }
         return Ok(reslut);
     }
     
