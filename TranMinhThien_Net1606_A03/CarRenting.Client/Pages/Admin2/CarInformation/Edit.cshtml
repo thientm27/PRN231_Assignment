@@ -155,71 +155,74 @@
                 })
             }
 
-        
+
 
             function formValidation() {
                 var isValid = true;
-                if ($("#CarName").val().trim() == "") {
-                    $("#CarName-error").html("CarName is required");
+                if ($("#CarName").val().trim() === "") {
+                    $("#CarName-error").html("Car Name is required");
                     isValid = false;
                 } else {
                     $("#CarName-error").html("");
                 }
 
-                if ($("#NumberOfDoors").val() == "") {
-                    $("#NumberOfDoors-error").html("NumberOfDoors is required");
+                if ($("#NumberOfDoors").val() === "") {
+                    $("#NumberOfDoors-error").html("Number of Doors is required");
                     isValid = false;
                 } else if ($("#NumberOfDoors").val() <= 0) {
-                    $("#NumberOfDoors-error").html("NumberOfDoors is must > 0");
+                    $("#NumberOfDoors-error").html("Number of Doors must be greater than 0");
                     isValid = false;
                 } else {
                     $("#NumberOfDoors-error").html("");
                 }
 
-                if ($("#SeatingCapacity").val() == "") {
-                    $("#SeatingCapacity-error").html("SeatingCapacity is required");
+                if ($("#SeatingCapacity").val() === "") {
+                    $("#SeatingCapacity-error").html("Seating Capacity is required");
                     isValid = false;
                 } else if ($("#SeatingCapacity").val() <= 0) {
-                    $("#SeatingCapacity-error").html("SeatingCapacity is must > 0");
+                    $("#SeatingCapacity-error").html("Seating Capacity must be greater than 0");
                     isValid = false;
                 } else {
                     $("#SeatingCapacity-error").html("");
                 }
-                // value
-              
-                //
-                if ($("#FuelType").val() == "") {
-                    $("#FuelType-error").html("FuelType is required");
+
+                if ($("#FuelType").val().trim() === "") {
+                    $("#FuelType-error").html("Fuel Type is required");
                     isValid = false;
                 } else {
                     $("#FuelType-error").html("");
                 }
 
-                if ($("#Year").val() == "") {
+                if ($("#Year").val() === "") {
                     $("#Year-error").html("Year is required");
                     isValid = false;
+                } else if ($("#Year").val() < 1900 || $("#Year").val() > 2023) {
+                    $("#Year-error").html("Year must be between 1900 and 2023");
+                    return;
                 } else {
                     $("#Year-error").html("");
                 }
 
-                if ($("#CarStatus").val() == "") {
-                    $("#CarStatus-error").html("CarStatus is required");
+                if ($("#CarStatus").val() === "") {
+                    $("#CarStatus-error").html("Car Status is required");
                     isValid = false;
+                } else if ($("#CarStatus").val() < 0 || $("#CarStatus").val() > 4) {
+                    $("#CarStatus-error").html("Car Status must be between 0 and 4");
+                    return;
                 } else {
                     $("#CarStatus-error").html("");
                 }
-                 if ($("#CarStatus").val() == "") {
-                    $("#CarStatus-error").html("CarStatus is required");
+
+                if ($("#CarRentingPricePerDay").val() === "") {
+                    $("#CarRentingPricePerDay-error").html("Car Renting Price Per Day is required");
                     isValid = false;
-                } else {
-                    $("#CarStatus-error").html("");
-                }
-                if ($("#CarRentingPricePerDay").val() == "") {
-                    $("#CarRentingPricePerDay-error").html("CarRentingPricePerDay is required");
-                    isValid = false;
+                } else if ($("#CarRentingPricePerDay").val() <= 0) {
+                    $("#CarRentingPricePerDay-error").html("Car Renting Price Per Day must be greater than 0");
+                    return;
                 } else {
                     $("#CarRentingPricePerDay-error").html("");
                 }
+
                 return isValid;
             }
 
