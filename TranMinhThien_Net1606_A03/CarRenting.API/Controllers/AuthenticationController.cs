@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using CarRenting.DTOs.Request;
 using CarRenting.API.Models;
 using CarRenting.BusinessObjects.Models;
+using CarRenting.DTOs.Reponse;
 
 namespace FlowerBouquetWebAPI.Controllers
 {
@@ -42,7 +43,13 @@ namespace FlowerBouquetWebAPI.Controllers
 
                 var token = GetToken(authClaims);
 
-                return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+                var reponse = new LoginResponse()
+                {
+                    Id = "-1",
+                    Name = "Admin",
+                    Jwt = new JwtSecurityTokenHandler().WriteToken(token),
+                };
+                return Ok(reponse);
             }
 
             var user = await _repository.LoginAsync(model.Email, model.Password);
@@ -56,7 +63,14 @@ namespace FlowerBouquetWebAPI.Controllers
                     new Claim(ClaimTypes.Role, UserRoles.Customer)
                 };
                 var token = GetToken(authClaims);
-                return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+                var reponse = new LoginResponse()
+                {
+                    Id = user.CustomerId.ToString(),
+                    Name = user.CustomerName,
+                    Jwt = new JwtSecurityTokenHandler().WriteToken(token),
+
+                };
+                return Ok(reponse);
             }
             return Unauthorized("Email or password are wrong");
         }

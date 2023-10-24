@@ -24,7 +24,7 @@ public class RentingController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetByIdCustomer(int id)
     {
-        var  rst= _repository.GetByIdCustomerAsync(id);
+        var  rst=  await _repository.GetByIdCustomerAsync(id);
         return Ok(rst);
     }
 
