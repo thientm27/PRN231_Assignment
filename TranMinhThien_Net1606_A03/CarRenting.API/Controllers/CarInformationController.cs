@@ -1,4 +1,4 @@
-using CarRenting.DTOs;
+using CarRenting.BusinessObjects.Models;
 using CarRenting.Repositories;
 using CarRenting.Repositories.Repo;
 using Microsoft.AspNetCore.Authorization;
@@ -12,31 +12,32 @@ public class CarInformationController : ControllerBase
     private readonly ICarInformationRepo _repository = new CarInformationRepo();
 
     [HttpGet]
-    public async Task<List<CarInformationDto>> Get()
+    public async Task<IActionResult> Get()
     {
-        return await _repository.GetAsync();
+        var reslut =        await _repository.GetAsync();
+        return Ok(reslut);
     }
 
     [HttpGet("{id}")]
-    public async Task<CarInformationDto?> GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        return await _repository.GetByIdAsync(id);
+         var reslut =       await _repository.GetByIdAsync(id);
+        return Ok(reslut);
     }
 
     [HttpPost]
     [Authorize]
-    public async Task<CarInformationDto?> Create(CarInformationDto newCar)
+    public async Task<IActionResult> Create(CarInformation newCar)
     {
-        var createdCustomer = await _repository.AddAsync(newCar);
-        return createdCustomer;
+        var reslut = await _repository.AddAsync(newCar);
+        return Ok(reslut);
     }
     
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, CarInformationDto newCar)
+    public async Task<IActionResult> Update(CarInformation newCar)
     {
-        
-        var result = await _repository.UpdateAsync(newCar);
-        return Ok(result);
+        var reslut = await _repository.UpdateAsync(newCar);
+        return Ok(reslut);
     }
     
     [HttpDelete("{id}")]

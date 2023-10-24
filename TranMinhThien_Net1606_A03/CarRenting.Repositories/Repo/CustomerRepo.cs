@@ -16,19 +16,7 @@ namespace CarRenting.Repositories.Repo
         }
 
         public async Task<Customer?> LoginAsync(string email, string password)
-        {
-            var adminAccount = GetAdmin();
-            if (email.ToLower() == adminAccount.Email.ToLower() && password == adminAccount.Password)
-            {
-                return new Customer()
-                {
-                    CustomerId = -1,
-                    Email = email,
-                    Password = password,
-                    CustomerName = "Admin",
-                };
-            }
-
+        {     
             // User check
             var loginCustomer = await _context.Customers.FirstOrDefaultAsync(od =>
                 od.Email.ToLower().Equals(email.ToLower()) && od.Password.Equals(password)
@@ -40,34 +28,16 @@ namespace CarRenting.Repositories.Repo
 
             return loginCustomer;
         }
-
-        private AdminAccountInfo GetAdmin()
-        {
-            IConfiguration config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
-
-            var adminSection = config.GetSection("AdminAccount");
-            var adminAccount = new AdminAccountInfo
-            {
-                Email = adminSection["Email"],
-                Password = adminSection["Password"]
-            };
-
-            return adminAccount;
-        }
-
-
         public async Task<Customer?> AddAsync(Customer customerDto)
         {
-            var existedEmail =
-                _context.Customers.FirstOrDefault(od =>
-                    od.Email.ToLower().Equals(customerDto.Email.ToLower())
-                    && od.CustomerStatus != 0);
-            if (existedEmail != null)
+            var existedEmail = await GetCustomerByEmail(customerDto.Email);
+            if (existedEmail != null && existedEmail.CustomerStatus != 0) // not deleted -> dulicated 
             {
                 return null;
+            }else if (existedEmail != null && existedEmail.CustomerStatus == 0) //deleted
+            {
+                var reslut = await UpdateAsync(customerDto);
+                return reslut;
             }
             var rEntry = await _context.Customers.AddAsync(customerDto);
             await _context.SaveChangesAsync();
@@ -87,14 +57,11 @@ namespace CarRenting.Repositories.Repo
 
         public async Task<Customer?> UpdateAsync(Customer customerDto)
         {
-            var existedEmail =
-                _context.Customers.FirstOrDefault(od =>
-                    od.Email.ToLower().Equals(customerDto.Email.ToLower()) 
-                    && od.CustomerId != customerDto.CustomerId
-                    && od.CustomerStatus != 0);
-            if (existedEmail != null)
+            var existedEmail = await GetCustomerByEmail(customerDto.Email);
+
+            if (existedEmail != null && existedEmail.CustomerStatus != 0)
             {
-                return null;
+                return null; // new email duplicated
             }
 
             var customer = _context.Customers.FirstOrDefault(od => od.CustomerId == customerDto.CustomerId);
@@ -106,12 +73,6 @@ namespace CarRenting.Repositories.Repo
             }
 
             return null;
-        }
-
-        public async Task<bool> CheckForDuplicateEmail(int id, String email)
-        {
-            var customer = await _context.Customers.FirstOrDefaultAsync(od => od.Email == email && od.CustomerId != id);
-            return customer == null;
         }
 
         public async Task<List<Customer>> GetAsync()
@@ -131,6 +92,12 @@ namespace CarRenting.Repositories.Repo
             }
 
             return false;
+        }
+
+        public async Task<Customer?> GetCustomerByEmail(string email)
+        {
+            return await  _context.Customers.FirstOrDefaultAsync(od =>
+             od.Email.ToLower().Equals(email.ToLower()));
         }
     }
 

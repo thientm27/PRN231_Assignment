@@ -15,43 +15,47 @@ public class RentingController : ControllerBase
     private readonly ICarInformationRepo _carInformationRepo = new CarInformationRepo();
 
     [HttpGet]
-    public async Task<List<RentingDto>> GetRenting()
+    public async Task<IActionResult> GetRenting()
     {
-        return await _repository.GetAsync();
+        var rst = await _repository.GetAsync();
+        return Ok(rst);
     }
 
     [HttpGet("{id}")]
-    public async Task<List<RentingDto>> GetByIdCustomer(int id)
+    public async Task<IActionResult> GetByIdCustomer(int id)
     {
-        return await _repository.GetByIdCustomerAsync(id);
+        var  rst= _repository.GetByIdCustomerAsync(id);
+        return Ok(rst);
     }
 
     [HttpGet("RentingDetail/{id}")]
-    public async Task<List<RentingDetailDto>?> GetDetailsById(int id)
+    public async Task<IActionResult> GetDetailsById(int id)
     {
-        return await _rentingDetailRepo.GetsByIdAsync(id);
+        var rst = await _rentingDetailRepo.GetsByIdAsync(id);
+        return Ok(rst);
     }
 
     [HttpGet("Renting/{id}")]
-    public async Task<RentingDto?> GetRentingById(int id)
+    public async Task<IActionResult> GetRentingById(int id)
     {
-        return await _repository.GetByIdAsync(id);
+        var rst =  await _repository.GetByIdAsync(id);
+        return Ok(rst);
     }
 
     [HttpPost]
-    public async Task<RentingDto?> CreateRenting(NewRenting data)
+    public async Task<IActionResult> CreateRenting(NewRenting data)
     {
-        var result = await _repository.AddWithDetailsAsync(data);
-        return result;
+        //var result = await _repository.AddWithDetailsAsync(data);
+        return NoContent();
     }
 
     [HttpPost("AvailableCar")]
-    public async Task<List<CarInformationDto>> GetAvailableCar(GetAvailableCarRequest data)
+    public async Task<IActionResult> GetAvailableCar(GetAvailableCarRequest data)
     {
         var rentedList = await _rentingDetailRepo.GetCarAlreadyRented(data.StartDateTime, data.EndDateTime);
         var listCar = await _carInformationRepo.GetCarAvailable();
         var result = listCar.Where(o => !rentedList.Contains(o.CarId)).ToList();
-        return result;
+        return Ok(result);
     }
     
     [HttpDelete("{id}")]

@@ -1,4 +1,4 @@
-﻿namespace CarRenting.API
+﻿namespace CarRenting.API.Models
 {
     public class TokenModel
     {

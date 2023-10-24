@@ -12,8 +12,9 @@ public class ManufactureController : ControllerBase
     private readonly IManufactureRepo _repository = new ManufactureRepo();
 
     [HttpGet]
-    public async Task<List<ManufacturerDto>> Get()
+    public async Task<IActionResult> Get()
     {
-        return await _repository.GetAsync();
+        var resulut = await _repository.GetAsync();
+        return Ok(resulut);
     }
 }

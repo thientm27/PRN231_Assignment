@@ -1,8 +1,8 @@
-using CarRenting.DTOs;
+using CarRenting.BusinessObjects.Models;
 
 namespace CarRenting.Repositories;
 
-public interface ICarInformationRepo : IBaseRepo<CarInformationDto>
+public interface ICarInformationRepo : IBaseRepo<CarInformation>
 {
-    public Task<List<CarInformationDto>> GetCarAvailable();
+    public Task<List<CarInformation>> GetCarAvailable();
 }

@@ -12,8 +12,9 @@ public class SupplierController : ControllerBase
     private readonly ISupplierRepo _repository = new SupplierRepo();
 
     [HttpGet]
-    public async Task<List<SupplierDto>> Get()
+    public async Task<IActionResult> Get()
     {
-        return await _repository.GetAsync();
+        var reslut = await _repository.GetAsync();
+        return Ok(reslut);
     }
 }
