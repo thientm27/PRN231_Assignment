@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace CarRenting.DTOs;
 
-public class CustomerDto
+public class CustomerDto : IdentityUser
 {
     public int CustomerId { get; set; } 
     public string? CustomerName { get; set; }

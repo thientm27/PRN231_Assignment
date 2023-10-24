@@ -14,7 +14,6 @@ public class CarInformationController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = UserRoles.Admin)]
-    [Authorize(Roles = UserRoles.Customer)]
     public async Task<IActionResult> Get()
     {
         var reslut = await _repository.GetAsync();

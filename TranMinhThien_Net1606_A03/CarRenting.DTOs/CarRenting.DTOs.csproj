@@ -10,4 +10,8 @@
       <Folder Include="Reponse\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.23" />
+    </ItemGroup>
+
 </Project>
