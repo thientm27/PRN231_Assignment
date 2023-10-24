@@ -21,6 +21,10 @@ public class CustomerController : ControllerBase
     public async Task<IActionResult> Get()
     {
         var reslut = await _repository.GetAsync();
+        if (reslut == null)
+        {
+            return BadRequest();
+        }
         return Ok(reslut);
     }
 

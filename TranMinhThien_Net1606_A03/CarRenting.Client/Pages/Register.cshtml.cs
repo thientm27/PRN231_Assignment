@@ -23,7 +23,7 @@ namespace CarRenting.Client.Pages
             _client = new HttpClient();
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             _client.DefaultRequestHeaders.Accept.Add(contentType);
-            _apiUrl = Constants.ApiCustomer;
+            _apiUrl = Constants.Api + "Authentication/register";
         }
 
         public IActionResult OnGet()
@@ -50,7 +50,7 @@ namespace CarRenting.Client.Pages
                 {
                     ModelState.AddModelError(Customer.Email, "Duplicated email");
                 }
-            }else if (result.StatusCode == HttpStatusCode.NoContent)
+            }else 
             {
                 ModelState.AddModelError("Customer.Email", "Duplicated email");
                 return Page();

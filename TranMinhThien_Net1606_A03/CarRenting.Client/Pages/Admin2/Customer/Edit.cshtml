@@ -38,9 +38,9 @@
             <span id="CustomerBirthday-error" class="text-danger"></span>
         </div>
         <div class="form-group mt-2">
-            <label for="customerStatus">customer Status</label>
-            <input type="number" class="form-control" id="customerStatus" required />
-            <span id="Password-error" class="text-danger"></span>
+            <label for="CustomerStatus">customer Status</label>
+            <input type="number" class="form-control" id="CustomerStatus" required />
+            <span id="CustomerStatus-error" class="text-danger"></span>
         </div>
         <div class="form-group mt-2">
             <label for="Password">Password</label>
@@ -88,8 +88,8 @@
                         var customerBirthday = new Date(result.customerBirthday);
                         var customerBirthdayFormatted = customerBirthday.toISOString().split('T')[0];
                         $("#CustomerBirthday").val(customerBirthdayFormatted);
-                         $("#Password").val(result.password);
-                        $("#customerStatus").val(result.customerStatus);
+                        $("#Password").val(result.password);
+                        $("#CustomerStatus").val(result.customerStatus);
                     },
                     error: function (error) {
                         console.log(error);
@@ -99,11 +99,6 @@
                 })
             }
 
-            function formValidation() {
-                var isValid = true;
-
-                return isValid;
-            }
 
             function formValidation() {
                 var isValid = true;
