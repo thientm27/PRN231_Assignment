@@ -7,10 +7,6 @@ namespace CarRenting.Client.Pages.Admin2.Customer
 {
     public class IndexModel : PageModel
     {
-        public IndexModel()
-        {
-           
-        }
         public IActionResult OnGet()
         {
 

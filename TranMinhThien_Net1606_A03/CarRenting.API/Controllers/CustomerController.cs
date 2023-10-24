@@ -25,7 +25,6 @@ public class CustomerController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> GetById(int id)
     {
         var reslut = await _repository.GetByIdAsync(id);

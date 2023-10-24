@@ -65,8 +65,8 @@
                             appendElement.append($("<td>").html(value["customerStatus"]));
                             appendElement.append($("<td>").html(value["password"]));
                             appendElement.append($("<td>").html(
-                                "<a class='btn btn-warning' href='./Customer/Edit?id=" + value["customerId"] + "'>Edit</a>" +
-                                "<a class='btn btn-danger ms-2' href='./Customer/Delete?id=" + value["customerId"] + "'>Delete</a>"
+                                "<a class='btn btn-warning' href='/Admin2/Customer/Edit?id=" + value["customerId"] + "'>Edit</a>" +
+                                "<a class='btn btn-danger ms-2' href='/Admin2/Customer/Delete?id=" + value["customerId"] + "'>Delete</a>"
                             ));
                         })
                     },

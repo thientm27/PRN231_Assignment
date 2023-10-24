@@ -1,4 +1,170 @@
 ﻿@page
 @model CarRenting.Client.Pages.Admin2.Customer.EditModel
+
 @{
+    ViewData["Title"] = "Edit";
+    string JWTToken = HttpContext.Session.GetString("JWToken");
+    var api = Constants.Api + "Customer";
+
+}
+
+<h1>Edit</h1>
+
+<h4>Customer</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group mt-2">
+            <label for="CustomerName">Name</label>
+            <input type="text" class="form-control" id="CustomerName" />
+            <span id="CustomerName-error" class="text-danger"></span>
+        </div>
+        <div class="form-group mt-2">
+            <label for="Telephone">Telephone</label>
+            <input type="text" class="form-control" id="Telephone" />
+            <span id="Telephone-error" class="text-danger"></span>
+        </div>
+        <div class="form-group mt-2">
+            <label for="Email">Email</label>
+            <input type="text" class="form-control" id="Email" />
+            <span id="Email" class="text-danger"></span>
+        </div>
+        <div class="form-group mt-2">
+            <label for="CustomerBirthday">Customer Birthday</label>
+            <input type="date" max="@DateTime.Now.AddYears(-18)" class="form-control" id="CustomerBirthday" />
+            <span id="CustomerBirthday" class="text-danger"></span>
+        </div>
+        <div class="form-group mt-2">
+            <label for="customerStatus">customer Status</label>
+            <input type="number" class="form-control" id="customerStatus" />
+            <span id="Password-error" class="text-danger"></span>
+        </div>
+        <div class="form-group mt-2">
+            <label for="Password">Password</label>
+            <input type="password" class="form-control" id="Password" />
+            <span id="Password-error" class="text-danger"></span>
+        </div>
+        <div class="form-group mt-4">
+            <button id="EditButton" class="btn btn-primary w-100">Edit</button>
+        </div>
+    </div>
+</div>
+
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            const params = (new URL(document.location)).searchParams;
+            const id = params.get("id");
+
+            GetCustomer();
+
+            function GetCustomer() {
+                $.ajax({
+                    url: "@api" + "/" + id, 
+                    type: "GET",
+                    dataType: "json",
+                    success: function (result) {
+                        $("#CustomerName").val(result.customerName);
+                        $("#Telephone").val(result.telephone);
+                        $("#Email").val(result.email);
+                        $("#CustomerBirthday").val(result.customerBirthday);
+                        $("#Password").val(result.password);
+                        $("#customerStatus").val(result.customerStatus);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                        // Redirect to home
+                        // window.location.href = "./Index";
+                    }
+                })
+            }
+
+            function formValidation() {
+                var isValid = true;
+                if ($("#FlowerBouquetName").val().trim() == "") {
+                    $("#FlowerBouquetName-error").html("Name is required");
+                    isValid = false;
+                } else {
+                    $("#FlowerBouquetName-error").html("");
+                }
+
+                if ($("#Description").val().trim() == "") {
+                    $("#Description-error").html("Description is required");
+                    isValid = false;
+                } else {
+                    $("#Description-error").html("");
+                }
+
+                if ($("#UnitPrice").val() <= 0) {
+                    $("#UnitPrice-error").html("Unit price must be greater than 0");
+                    isValid = false;
+                } else {
+                    $("#UnitPrice-error").html("");
+                }
+
+                if ($("#UnitsInStock").val() <= 0) {
+                    $("#UnitsInStock-error").html("Units in stock must be greater than 0");
+                    isValid = false;
+                } else {
+                    $("#UnitsInStock-error").html("");
+                }
+
+                if ($("#Category").val() == "") {
+                    $("#Category-error").html("Category is required");
+                    isValid = false;
+                } else {
+                    $("#Category-error").html("");
+                }
+
+                if ($("#Supplier").val() == "") {
+                    $("#Supplier-error").html("Supplier is required");
+                    isValid = false;
+                } else {
+                    $("#Supplier-error").html("");
+                }
+
+                return isValid;
+            }
+
+            // $("#EditButton").click(function () {
+            //     if (!formValidation()) {
+            //         return;
+            //     }
+            //     $.ajax({
+            //         url: `http://localhost:5167/api/FlowerBouquet/${id}`,
+            //         type: "PUT",
+            //         data: JSON.stringify({
+            //             "flowerBouquetName": $("#FlowerBouquetName").val(),
+            //             "description": $("#Description").val(),
+            //             "unitPrice": $("#UnitPrice").val(),
+            //             "unitsInStock": $("#UnitsInStock").val(),
+            //             "categoryID": $("#Category").val(),
+            //             "flowerBouquetStatus": 1,
+            //             "supplierID": $("#Supplier").val()
+            //         }),
+            //         contentType: "application/json",
+            //         beforeSend: function (xhr) {
+            //             xhr.setRequestHeader("Authorization", "Bearer " + "@JWTToken");
+            //         },
+            //         success: function (result, status, xhr) {
+            //             alert("Edit successfully");
+            //             // Redirect to home
+            //             window.location.href = "/FlowerBouquet";
+            //         },
+            //         error: function (xhr, status, error) {
+            //             console.log(xhr)
+            //             if (xhr.status == 400) {
+            //                 $("#FlowerBouquetName-error").html("Name already exists");
+            //             }
+            //         }
+            //     })
+            // })
+        })
+    </script>
 }
