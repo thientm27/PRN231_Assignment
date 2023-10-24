@@ -19,6 +19,12 @@ public class CarInformationController : ControllerBase
     public async Task<IActionResult> Get()
     {
         var reslut = await _repository.GetAsync();
+        foreach (var item in reslut)
+        {
+            item.Manufacturer.CarInformations = null;
+            item.Supplier.CarInformations = null;
+
+        }
         return Ok(reslut);
     }
 
