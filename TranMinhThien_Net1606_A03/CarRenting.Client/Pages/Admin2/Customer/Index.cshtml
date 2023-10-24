@@ -1,0 +1,116 @@
+﻿@page
+@model CarRenting.Client.Pages.Admin2.Customer.IndexModel
+@{
+    ViewData["Title"] = "List customer";
+    var jwt = HttpContext.Session.GetString("JWToken");
+    var api = Constants.Api + "Customer";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>
+                Telephone
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                CustomerBirthday
+            </th>
+            <th>
+                CustomerStatus
+            </th>
+            <th>
+                Password
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            ShowAllFlowerBouquets();
+
+            function ShowAllFlowerBouquets() {
+                $("table tbody").html("");
+                $.ajax({
+                    url: "@api",
+                    type: "GET",
+                    contentType: "application/json",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Bearer " + "@jwt");
+                    },
+                    success: function (result, status, xhr) {
+                        $.each(result, function (index, value) {
+                            $("tbody").append($("<tr>"));
+                            const appendElement = $("tbody tr").last();
+                            appendElement.append($("<td>").html(value["customerId"]));
+                            appendElement.append($("<td>").html(value["customerName"]));
+                            appendElement.append($("<td>").html(value["telephone"]));
+                            appendElement.append($("<td>").html(value["email"]));
+                            appendElement.append($("<td>").html(value["customerBirthday"]));
+                            appendElement.append($("<td>").html(value["customerStatus"]));
+                            appendElement.append($("<td>").html(value["password"]));
+                            appendElement.append($("<td>").html(
+                                "<a class='btn btn-warning' href='FlowerBouquet/Edit?id=" + value["flowerBouquetID"] + "'>Edit</a>" +
+                                "<a class='btn btn-danger ms-2' href='FlowerBouquet/Delete?id=" + value["flowerBouquetID"] + "'>Delete</a>"
+                            ));
+                        })
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr);
+                    }
+                })
+            }
+
+            // $("#form-search").submit(function (e) {
+            //     e.preventDefault();
+            //     const keyword = $("input[name='keyword']").val();
+            //     $.ajax({
+            //         url: "http://localhost:5167/api/FlowerBouquet/Search/" + keyword,
+            //         type: "GET",
+            //         contentType: "application/json",
+            //         success: function (result, status, xhr) {
+            //             $("table tbody").html("");
+            //             $.each(result, function (index, value) {
+            //                 $("tbody").append($("<tr>"));
+            //                 const appendElement = $("tbody tr").last();
+            //                 appendElement.append($("<td>").html(value["flowerBouquetName"]));
+            //                 appendElement.append($("<td>").html(value["description"]));
+            //                 appendElement.append($("<td>").html(value["unitPrice"]));
+            //                 appendElement.append($("<td>").html(value["unitsInStock"]));
+            //                 appendElement.append($("<td>").html(value["flowerBouquetStatus"]));
+            //                 appendElement.append($("<td>").html(value["category"]["categoryName"]));
+            //                 appendElement.append($("<td>").html(value["supplier"]["supplierName"]));
+            //                 appendElement.append($("<td>").html(
+            //                     "<a class='btn btn-warning' href='FlowerBouquet/Edit?id=" + value["flowerBouquetID"] + "'>Edit</a>" +
+            //                     "<a class='btn btn-danger ms-2' href='FlowerBouquet/Delete?id=" + value["flowerBouquetID"] + "'>Delete</a>"
+            //                 ));
+            //             })
+            //         },
+            //         error: function (xhr, status, error) {
+            //             console.log(xhr);
+            //         }
+            //     })
+            // })
+
+            // $("#clear-search").click(function () {
+            //     $("input[name='keyword']").val("");
+            //     ShowAllFlowerBouquets();
+            // })
+        })
+    </script>
+}

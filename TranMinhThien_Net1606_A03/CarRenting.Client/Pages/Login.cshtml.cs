@@ -3,7 +3,6 @@ using CarRenting.DTOs;
 using CarRenting.DTOs.Request;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using RazorPage.ViewModels;
 
 namespace CarRenting.Client.Pages
 {
@@ -17,7 +16,7 @@ namespace CarRenting.Client.Pages
             _client = new HttpClient();
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             _client.DefaultRequestHeaders.Accept.Add(contentType);
-            _apiUrl = Constants.ApiCustomer;
+            _apiUrl = Constants.Api + "Authentication/login";
         }
 
         [BindProperty] public CustomerDto MemberAccount { get; set; } = default!;
@@ -28,33 +27,26 @@ namespace CarRenting.Client.Pages
             {
                 return Page();
             }
-            var response = await _client.PostAsJsonAsync(_apiUrl + "/login", new LoginRequest()
+            var response = await _client.PostAsJsonAsync(_apiUrl, new LoginRequest()
             {
                 Email = MemberAccount.Email,
                 Password = MemberAccount.Password
             });
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                var dataResponse = response.Content.ReadFromJsonAsync<CustomerDto>().Result;
-                if (dataResponse.CustomerId == -1)
-                {
-                    HttpContext.Session.SetInt32("User", -1);
-                    return RedirectToPage("./Admin/Customer/Index");
-                }
+                var dataResponse = await response.Content.ReadFromJsonAsync<string>();
 
-                HttpContext.Session.SetInt32("User", dataResponse.CustomerId);
-                return RedirectToPage("./Customer/Index");
-            }
+                // Store the unencoded token in the session
+                HttpContext.Session.SetString("JWToken", dataResponse);
 
-            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                ViewData["notification"] = "Wrong email or password!";
-                return Page();
+                return RedirectToPage("/Admin2/Customer/Index");
             }
             else
             {
+                ViewData["notification"] = response.Content;
                 return Page();
             }
+       
         }
 
         public IActionResult OnPostLogOut()
