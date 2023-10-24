@@ -1,0 +1,144 @@
+﻿@page
+@model CarRenting.Client.Pages.Customer2.CreateModel
+@{
+    ViewData["Title"] = "Create";
+    string JWTToken = HttpContext.Session.GetString("JWToken");
+    var api = Constants.Api + "Renting";
+}
+
+<h4>Create new renting</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group mt-2">
+            <input type="text" class="form-control" id="CustomerId" hidden />
+        </div>
+        <div class="form-group mt-2">
+            <label for="RentingDate">Renting Date</label>
+            <input type="date" class="form-control" id="RentingDate" required />
+            <span id="RentingDate-error" class="text-danger"></span>
+        </div>
+        <div class="form-group mt-2">
+            <label for="TotalPrice">Total Price</label>
+            <input type="number" class="form-control" id="TotalPrice" required />
+            <span id="TotalPrice-error" class="text-danger"></span>
+        </div>
+        <div class="form-group mt-4">
+            <button id="CreateButton" class="btn btn-primary w-100">Create</button>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<br />
+<!-- CURRENT RENTING -->
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>StartDate</th>
+            <th>EndDate</th>
+            <th>Price</th>
+            <th>CarName</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<br />
+<hr />
+<br />
+
+<!-- FIND CAR -->
+<h4>Find car available</h4>
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group mt-2">
+            <label for="StartDate">Start Date</label>
+            <input type="date" id="StartDate" class="form-control" />
+            <span id="StartDate-error" class="text-danger"></span>
+        </div>
+        <div class="form-group mt-2">
+            <label for="EndDate">End Date</label>
+            <input type="date" id="EndDate" class="form-control" />
+            <span id="EndDate-error" class="text-danger"></span>
+        </div>
+        <div>
+            <button id="FindCar" class="btn btn-primary w-100">Find Car</button>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<br />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>CarId</th>
+            <th>CarName</th>
+            <th>CarDescription</th>
+            <th>NumberOfDoors</th>
+            <th>SeatingCapacity</th>
+            <th>FuelType</th>
+            <th>Year</th>
+            <th>CarStatus</th>
+            <th>CarRentingPricePerDay</th>
+            <th>Manufacturer</th>
+            <th>Supplier</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#FindCar").click(function () {
+                $("table tbody").html("");
+                $.ajax({
+                    url: "@api" + "/AvailableCar",
+                    type: "POST",
+                    data: JSON.stringify({
+                        "startDateTime": $("#StartDate").val(),
+                        "endDateTime": $("#EndDate").val(),
+                    }),
+                    contentType: "application/json",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Bearer " + "@JWTToken");
+                    },
+                    success: function (result, status, xhr) {
+                        $.each(result, function (index, value) {
+                            $("tbody").append($("<tr>"));
+                            const appendElement = $("tbody tr").last();
+                            appendElement.append($("<td>").html(value["carId"]));
+                            appendElement.append($("<td>").html(value["carName"]));
+                            appendElement.append($("<td>").html(value["carDescription"]));
+                            appendElement.append($("<td>").html(value["numberOfDoors"]));
+                            appendElement.append($("<td>").html(value["seatingCapacity"]));
+                            appendElement.append($("<td>").html(value["fuelType"]));
+                            appendElement.append($("<td>").html(value["year"]));
+                            appendElement.append($("<td>").html(value["carStatus"]));
+                            appendElement.append($("<td>").html(value["carRentingPricePerDay"]));
+                            appendElement.append($("<td>").html(value["manufacturer"]["manufacturerName"]));
+                            appendElement.append($("<td>").html(value["supplier"]["supplierName"]));
+                            appendElement.append($("<td>").html(
+                                "<button id='FindCar' class='btn btn-primary w-100'>Find Car</button>"
+                            ));
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr);
+                    }
+                });
+            });
+        });
+    </script>
+}
