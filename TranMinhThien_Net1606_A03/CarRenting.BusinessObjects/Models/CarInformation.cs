@@ -22,8 +22,8 @@ namespace CarRenting.BusinessObjects.Models
         public byte? CarStatus { get; set; }
         public decimal? CarRentingPricePerDay { get; set; }
 
-        public virtual Manufacturer Manufacturer { get; set; } = null!;
-        public virtual Supplier Supplier { get; set; } = null!;
+        public virtual Manufacturer? Manufacturer { get; set; } = null!;
+        public virtual Supplier? Supplier { get; set; } = null!;
         public virtual ICollection<RentingDetail> RentingDetails { get; set; }
     }
 }
