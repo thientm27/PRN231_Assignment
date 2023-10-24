@@ -59,7 +59,7 @@ namespace CarRenting.Repositories.Repo
         {
             var existedEmail = await GetCustomerByEmail(customerDto.Email);
 
-            if (existedEmail != null && existedEmail.CustomerStatus != 0)
+            if (existedEmail.CustomerId != customerDto.CustomerId && existedEmail != null && existedEmail.CustomerStatus != 0)
             {
                 return null; // new email duplicated
             }

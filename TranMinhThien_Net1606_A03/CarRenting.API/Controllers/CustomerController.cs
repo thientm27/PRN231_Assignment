@@ -41,7 +41,7 @@ public class CustomerController : ControllerBase
     
     [HttpPut("{id}")]
     [Authorize(Roles = UserRoles.Admin)]
-    public async Task<IActionResult> Update(int id, Customer customerDto)
+    public async Task<IActionResult> Update(Customer customerDto)
     {
         var result = await _repository.UpdateAsync(customerDto);
         return Ok(result);
