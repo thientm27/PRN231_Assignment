@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CarRenting.BusinessObjects.Models
 {
@@ -9,7 +9,7 @@ namespace CarRenting.BusinessObjects.Models
         {
             RentingDetails = new HashSet<RentingDetail>();
         }
-
+        [Key]
         public int CarId { get; set; }
         public string CarName { get; set; } = null!;
         public string? CarDescription { get; set; }

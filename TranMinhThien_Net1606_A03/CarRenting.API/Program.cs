@@ -1,7 +1,11 @@
 ﻿using CarRenting.API.Models;
+using CarRenting.BusinessObjects.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.OData.Routing;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
@@ -14,10 +18,14 @@ var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
 // Add services to the container.
 
 // Default 
-builder.Services.AddControllers().AddNewtonsoftJson(options =>
-{
-    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-}); 
+builder.Services
+    .AddControllers().AddNewtonsoftJson(options =>
+        {
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+        })
+    .AddOData(o => o.Select().Filter()
+            .Count().OrderBy().Expand().SetMaxTop(100)
+            .AddRouteComponents("odata", GetEdmModel())); ; 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigureSwaggerGen(c =>
 {
@@ -94,6 +102,25 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseODataBatching();
+app.Use((context, next) =>
+{
+    var endpoints = context.GetEndpoint();
+    if (endpoints == null)
+    {
+        return next();
+    }
+
+    IEnumerable<string> templates;
+    IODataRoutingMetadata metadata = endpoints.Metadata.GetMetadata<IODataRoutingMetadata>();
+
+    if (metadata != null)
+    {
+        templates = metadata.Template.GetTemplates();
+    }
+
+    return next();
+});
 app.UseCors();
 app.UseHttpsRedirection();
 // Use Authen
@@ -103,3 +130,11 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+static IEdmModel GetEdmModel()
+{
+    ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
+    builder.EntitySet<CarInformation>("CarInformation");
+    return builder.GetEdmModel();
+}

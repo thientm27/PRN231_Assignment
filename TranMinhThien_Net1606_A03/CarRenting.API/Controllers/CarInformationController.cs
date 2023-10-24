@@ -4,6 +4,7 @@ using CarRenting.Repositories;
 using CarRenting.Repositories.Repo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace CarRenting.API.Controllers;
 [ApiController]
@@ -13,6 +14,7 @@ public class CarInformationController : ControllerBase
     private readonly ICarInformationRepo _repository = new CarInformationRepo();
 
     [HttpGet]
+    [EnableQuery]
     [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> Get()
     {
