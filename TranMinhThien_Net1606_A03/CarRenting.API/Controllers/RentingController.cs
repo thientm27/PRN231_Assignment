@@ -46,8 +46,20 @@ public class RentingController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateRenting(RentingTransaction data)
     {
+
         try
         {
+            // Validation
+            foreach (var item in data.RentingDetails)
+            {
+                var rentedList = await _rentingDetailRepo.GetCarAlreadyRented(item.StartDate, item.EndDate);
+                if (rentedList.Contains(item.CarId))
+                {
+                    return BadRequest();
+                }
+            }
+
+            // Add
             var order = await _repository.AddAsync(data);
         }
         catch(Exception e)

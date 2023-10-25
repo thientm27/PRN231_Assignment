@@ -117,6 +117,21 @@
             $("#FindCar").click(function () {
                 var startDate = $("#StartDate").val();
                 var endDate = $("#EndDate").val();
+                var currentDate = new Date(); // Get the current date
+
+                var currentDateFormatted = currentDate.toISOString().split('T')[0]; // Convert it to 'YYYY-MM-DD' format
+
+                // Check if start date is in the past
+                if (startDate < currentDateFormatted) {
+                    alert("Start date cannot be in the past.");
+                    return;
+                }
+
+                // Check if end date is in the past
+                if (endDate < currentDateFormatted) {
+                    alert("End date cannot be in the past.");
+                    return;
+                }
 
                 // Check if start date and end date are filled in
                 if (!startDate || !endDate) {
@@ -352,7 +367,10 @@
                         window.location.href = "./Index";
                     },
                     error: function (xhr, status, error) {
-                        console.error("Error creating renting transaction: " + error);
+                        alert("Renting transaction created fail. Maybe you car has been rented");
+                        clearSessionCart();
+                        var rentingDetails = getRentingDetailsFromSession();
+                        populateTable1(rentingDetails);
                     }
                 });
             });
