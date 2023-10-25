@@ -1,4 +1,5 @@
-﻿using CarRenting.DTOs;
+﻿using CarRenting.BusinessObjects.Models;
+using CarRenting.DTOs;
 using CarRenting.DTOs.Request;
 using CarRenting.Repositories;
 using CarRenting.Repositories.Repo;
@@ -43,10 +44,18 @@ public class RentingController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateRenting(NewRenting data)
+    public async Task<IActionResult> CreateRenting(RentingTransaction data)
     {
-        //var result = await _repository.AddWithDetailsAsync(data);
-        return NoContent();
+        try
+        {
+            var order = await _repository.AddAsync(data);
+        }
+        catch(Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+
+        return Ok();
     }
 
     [HttpPost("AvailableCar")]

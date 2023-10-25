@@ -11,7 +11,7 @@ namespace CarRenting.BusinessObjects.Models
         public DateTime EndDate { get; set; }
         public decimal? Price { get; set; }
 
-        public virtual CarInformation Car { get; set; } = null!;
-        public virtual RentingTransaction RentingTransaction { get; set; } = null!;
+        public virtual CarInformation? Car { get; set; } = null!;
+        public virtual RentingTransaction? RentingTransaction { get; set; } = null!;
     }
 }

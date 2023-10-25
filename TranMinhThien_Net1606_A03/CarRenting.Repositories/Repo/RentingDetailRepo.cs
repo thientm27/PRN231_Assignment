@@ -25,10 +25,10 @@ public class RentingDetailRepo : IRentingDetailRepo
 
     public async Task<RentingDetail?> AddAsync(RentingDetail data)
     {
-        // var maxId = await _context.CarInformations.MaxAsync(o => o.CarId);
-        // entity.CarId = maxId + 1;
+
         var rEntry = await _context.RentingDetails.AddAsync(data);
         await _context.SaveChangesAsync();
+
         return data;
     }
 

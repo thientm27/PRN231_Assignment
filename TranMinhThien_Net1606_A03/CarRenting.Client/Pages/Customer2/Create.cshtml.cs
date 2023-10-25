@@ -11,8 +11,4 @@ namespace CarRenting.Client.Pages.Customer2
         }
     }
 
-    public class CartItem
-    {
-        public List<RentingDetailDto> Items { get; set; } = new();
-    }
 }
