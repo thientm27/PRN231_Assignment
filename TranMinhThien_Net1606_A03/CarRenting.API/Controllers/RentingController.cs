@@ -1,8 +1,10 @@
-﻿using CarRenting.BusinessObjects.Models;
+﻿using CarRenting.API.Models;
+using CarRenting.BusinessObjects.Models;
 using CarRenting.DTOs;
 using CarRenting.DTOs.Request;
 using CarRenting.Repositories;
 using CarRenting.Repositories.Repo;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarRenting.API.Controllers;
@@ -16,6 +18,7 @@ public class RentingController : ControllerBase
     private readonly ICarInformationRepo _carInformationRepo = new CarInformationRepo();
 
     [HttpGet]
+    [Authorize(Roles = UserRoles.Admin)]
     public async Task<IActionResult> GetRenting()
     {
         var rst = await _repository.GetAsync();
@@ -23,6 +26,7 @@ public class RentingController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = UserRoles.Customer)]
     public async Task<IActionResult> GetByIdCustomer(int id)
     {
         var  rst=  await _repository.GetByIdCustomerAsync(id);
@@ -44,6 +48,7 @@ public class RentingController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = UserRoles.Customer)]
     public async Task<IActionResult> CreateRenting(RentingTransaction data)
     {
 
@@ -71,6 +76,7 @@ public class RentingController : ControllerBase
     }
 
     [HttpPost("AvailableCar")]
+    [Authorize(Roles = UserRoles.Customer)]
     public async Task<IActionResult> GetAvailableCar(GetAvailableCarRequest data)
     {
         var rentedList = await _rentingDetailRepo.GetCarAlreadyRented(data.StartDateTime, data.EndDateTime);
@@ -80,6 +86,7 @@ public class RentingController : ControllerBase
     }
     
     [HttpDelete("{id}")]
+    [Authorize(Roles = UserRoles.Customer)]
     public async Task<IActionResult> Delete(int id)
     {
         await _repository.DeleteAsync(id);
