@@ -15,12 +15,12 @@
         </div>
         <div class="form-group mt-2">
             <label for="RentingDate">Renting Date</label>
-            <input type="date" class="form-control" id="RentingDate" required />
+            <input type="date" class="form-control" id="RentingDate" value="@DateTime.Today" readonly />
             <span id="RentingDate-error" class="text-danger"></span>
         </div>
         <div class="form-group mt-2">
             <label for="TotalPrice">Total Price</label>
-            <input type="number" class="form-control" id="TotalPrice" required />
+            <input type="number" class="form-control" id="TotalPrice" readonly />
             <span id="TotalPrice-error" class="text-danger"></span>
         </div>
         <div class="form-group mt-4">
@@ -34,7 +34,7 @@
 <br />
 <!-- CURRENT RENTING -->
 
-<table class="table">
+<table class="table" id="table1">
     <thead>
         <tr>
             <th>StartDate</th>
@@ -76,7 +76,7 @@
 <hr />
 <br />
 
-<table class="table">
+<table class="table" id="table2">
     <thead>
         <tr>
             <th>CarId</th>
@@ -100,9 +100,34 @@
 @section scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-
             $("#FindCar").click(function () {
-                $("table tbody").html("");
+                $("#table2 tbody").html("");
+
+                // Retrieve rentingDetails from the session
+                var rentingDetails = getRentingDetailsFromSession();
+                var ignoreCarTemp = [];
+
+                if (rentingDetails.length > 0) {
+                    // Calculate the date range of the rentingDetails
+                    var startDates = rentingDetails.map(function (detail) { return new Date(detail.StartDate); });
+                    var endDates = rentingDetails.map(function (detail) { return new Date(detail.EndDate); });
+
+                    // Convert the selected start and end dates to Date objects
+                    var selectedStartDate = new Date($("#StartDate").val());
+                    var selectedEndDate = new Date($("#EndDate").val());
+
+                    // Check for overlapping date ranges
+                    for (var i = 0; i < rentingDetails.length; i++) {
+                        if (
+                            (selectedStartDate >= startDates[i] && selectedStartDate <= endDates[i]) ||
+                            (startDates[i] >= selectedStartDate && endDates[i] <= selectedEndDate) ||
+                            (startDates[i] <= selectedEndDate && endDates[i] >= selectedEndDate)
+                        ) {
+                            ignoreCarTemp.push(rentingDetails[i].CarId);
+                        }
+                    }
+                }
+                console.log(ignoreCarTemp);
                 $.ajax({
                     url: "@api" + "/AvailableCar",
                     type: "POST",
@@ -116,22 +141,28 @@
                     },
                     success: function (result, status, xhr) {
                         $.each(result, function (index, value) {
-                            $("tbody").append($("<tr>"));
-                            const appendElement = $("tbody tr").last();
-                            appendElement.append($("<td>").html(value["carId"]));
-                            appendElement.append($("<td>").html(value["carName"]));
-                            appendElement.append($("<td>").html(value["carDescription"]));
-                            appendElement.append($("<td>").html(value["numberOfDoors"]));
-                            appendElement.append($("<td>").html(value["seatingCapacity"]));
-                            appendElement.append($("<td>").html(value["fuelType"]));
-                            appendElement.append($("<td>").html(value["year"]));
-                            appendElement.append($("<td>").html(value["carStatus"]));
-                            appendElement.append($("<td>").html(value["carRentingPricePerDay"]));
-                            appendElement.append($("<td>").html(value["manufacturer"]["manufacturerName"]));
-                            appendElement.append($("<td>").html(value["supplier"]["supplierName"]));
-                            appendElement.append($("<td>").html(
-                                "<button id='FindCar' class='btn btn-primary w-100'>Find Car</button>"
-                            ));
+                            var carIdString = value["carId"].toString(); // Convert carId to a string
+                            if (!ignoreCarTemp.includes(carIdString)) {
+                                // Append rows to table2 only for cars not in the ignoreCarTemp list
+                                $("#table2 tbody").append($("<tr>"));
+                                const appendElement = $("#table2 tbody tr").last();
+
+                                // Add data to the table2 row
+                                appendElement.append($("<td>").html(carIdString)); // Use the converted string
+                                appendElement.append($("<td>").html(value["carName"]));
+                                appendElement.append($("<td>").html(value["carDescription"]));
+                                appendElement.append($("<td>").html(value["numberOfDoors"]));
+                                appendElement.append($("<td>").html(value["seatingCapacity"]));
+                                appendElement.append($("<td>").html(value["fuelType"]));
+                                appendElement.append($("<td>").html(value["year"]));
+                                appendElement.append($("<td>").html(value["carStatus"]));
+                                appendElement.append($("<td>").html(value["carRentingPricePerDay"]));
+                                appendElement.append($("<td>").html(value["manufacturer"]["manufacturerName"]));
+                                appendElement.append($("<td>").html(value["supplier"]["supplierName"]));
+                                appendElement.append($("<td>").html(
+                                    "<button id='AddCar' class='btn btn-primary w-100'>Add Car</button>"
+                                ));
+                            }
                         });
                     },
                     error: function (xhr, status, error) {
@@ -139,6 +170,97 @@
                     }
                 });
             });
+
+
+
+            // Event handler for the "AddCar" button
+            $("#table2").on("click", "button#AddCar", function () {
+                // Get the car ID and other details from the selected row
+                var row = $(this).closest("tr");
+                var carId = row.find("td:eq(0)").text(); // Assuming carId is in the first column
+                var carName = row.find("td:eq(1)").text(); // Assuming carName is in the second column
+
+                // Calculate the selected car's price and other details
+                var startDay = $("#StartDate").val();
+                var endDay = $("#EndDate").val();
+
+                var rentalDuration = new Date(endDay) - new Date(startDay);
+                var numberOfDays = Math.floor(rentalDuration / (1000 * 60 * 60 * 24));
+
+                var price = numberOfDays * parseFloat(row.find("td:eq(7)").text()); // CarRentingPricePerDay
+
+                // Create a JSON object with the car details
+                var rentingDetail = {
+                    CarId: carId,
+                    StartDate: startDay,
+                    EndDate: endDay,
+                    Price: price,
+                    CarName: carName
+                };
+
+                // Remove the selected car from the table
+                row.remove();
+
+                // Add the rentingDetail to the cart (you may need to adapt this logic)
+                // Replace this with your own logic to manage the cart on the client side
+                var sessionData = JSON.parse(localStorage.getItem("Cart")) || { Items: [] };
+                sessionData.Items.push(rentingDetail);
+                localStorage.setItem("Cart", JSON.stringify(sessionData));
+                
+                // Display to current cart
+                var rentingDetails = getRentingDetailsFromSession();
+                populateTable1(rentingDetails);
+            });
+
+           
+
+            // Function to populate table1 with rentingDetail data
+            function populateTable1(rentingDetails) {
+                // Get the table body
+                var tableBody = $("#table1 tbody");
+                tableBody.empty(); // Clear existing data in the table
+
+                // Loop through the rentingDetail objects and add them to the table
+                rentingDetails.forEach(function (detail) {
+                    var row = $("<tr>");
+                    row.append($("<td>").text(detail.StartDate));
+                    row.append($("<td>").text(detail.EndDate));
+                    row.append($("<td>").text(detail.Price));
+                    row.append($("<td>").text(detail.CarName));
+                    row.append($("<td>").html('<button class="btn btn-danger removeRow">Remove</button>'));
+                    tableBody.append(row);
+                });
+            }
+
+            // Event handler to remove a row from table1
+            $("#table1").on("click", ".removeRow", function () {
+                var row = $(this).closest("tr");
+                var index = row.data("index"); // Retrieve the index stored in data attribute
+                // Remove the corresponding rentingDetail from the array
+                var rentingDetails = getRentingDetailsFromSession();
+                rentingDetails.splice(index, 1);
+                // Save the updated array to the session
+                saveRentingDetailsToSession(rentingDetails);
+                // Remove the row from the table
+                row.remove();
+            });
+
+
+            function getRentingDetailsFromSession() {
+                // Retrieve the cart data from local storage
+                var sessionData = JSON.parse(localStorage.getItem("Cart")) || { Items: [] };
+                return sessionData.Items;
+            }
+            // Function to save rentingDetail objects to the session
+            function saveRentingDetailsToSession(rentingDetails) {
+                // Retrieve the cart data from local storage
+                var sessionData = JSON.parse(localStorage.getItem("Cart")) || { Items: [] };
+                // Update the Items property with the new rentingDetails
+                sessionData.Items = rentingDetails;
+                // Save the updated data back to local storage
+                localStorage.setItem("Cart", JSON.stringify(sessionData));
+            }
         });
     </script>
 }
+

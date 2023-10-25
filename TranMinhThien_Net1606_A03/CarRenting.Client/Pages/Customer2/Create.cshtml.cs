@@ -1,3 +1,4 @@
+using CarRenting.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -8,5 +9,10 @@ namespace CarRenting.Client.Pages.Customer2
         public void OnGet()
         {
         }
+    }
+
+    public class CartItem
+    {
+        public List<RentingDetailDto> Items { get; set; } = new();
     }
 }
